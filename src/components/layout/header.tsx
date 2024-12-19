@@ -14,7 +14,6 @@ import { useState } from "react";
 
 export default function Header() {
   const { data: session } = useSession();
-  console.log(session);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
@@ -54,7 +53,7 @@ export default function Header() {
                     </DropdownMenuItem>
                     {session.user?.role === "admin" && (
                       <DropdownMenuItem>
-                        <Link href="/admin">Admin Panel</Link>
+                        <Link href="/admin/user">Admin Panel</Link>
                       </DropdownMenuItem>
                     )}
                     <DropdownMenuItem

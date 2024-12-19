@@ -1,10 +1,11 @@
-import NextAuth, { User } from "next-auth";
+import NextAuth, { AuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { compare } from "bcryptjs";
 import connectDB from "@/lib/db/connect";
-import * as db from "@/lib/db/models/user.model";
+import { User } from "@/lib/db/models/user.model";
 
-const handler = NextAuth({
+export const authOptions = {
+  secret: "secret",
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -19,7 +20,7 @@ const handler = NextAuth({
 
         await connectDB();
 
-        const user = await db.User.findOne({ email: credentials.email });
+        const user = await User.findOne({ email: credentials.email });
 
         if (!user) {
           throw new Error("No user found with this email");
@@ -49,8 +50,6 @@ const handler = NextAuth({
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        console.log("user from jwt");
-        console.log(user);
         // Ensure user has a role property before assigning
         if (
           typeof user === "object" &&
@@ -77,11 +76,12 @@ const handler = NextAuth({
           id: token.id as string,
         };
       }
-      console.log("session", session);
 
       return session;
     },
   },
-});
+} as AuthOptions;
+
+const handler = NextAuth(authOptions);
 
 export { handler as GET, handler as POST };

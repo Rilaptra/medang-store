@@ -23,7 +23,6 @@ export default function Register() {
       } else {
         signIn("credentials", { ...data, callbackUrl: "/" });
         alert("success");
-        console.log(result);
       }
     } catch (error: any) {
       setError(error);

@@ -6,7 +6,7 @@ export interface IUser extends Document {
   email: string;
   name?: string;
   profile_picture?: string;
-  role: "member" | "admin" | "superadmin";
+  role: "member" | "admin" | "seller";
   kelas?: string;
   nomor_kelas?: string;
   phone_number?: string;
@@ -22,21 +22,24 @@ const UserSchema = new Schema<IUser>({
   hash: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   name: String,
-  profile_picture: String,
+  profile_picture: { type: String, default: "" },
   role: {
     type: String,
-    enum: ["member", "admin", "superadmin"],
+    enum: ["member", "admin", "seller"],
     required: true,
     default: "member",
   },
-  kelas: String,
+  kelas: { type: String, default: "XII-F" },
   nomor_kelas: String,
   phone_number: String,
-  bio: { type: String, maxlength: 1000 },
-  website_sosmed_link: String,
+  bio: { type: String, maxlength: 1000, default: "Write your bio here" },
+  website_sosmed_link: {
+    type: String,
+    default: "https://www.instagram.com/username",
+  },
   verified: { type: Boolean, default: false },
-  followers: [{ type: Schema.Types.ObjectId, ref: "User" }],
-  created_at: { type: Date, default: Date.now },
+  followers: [{ type: Schema.Types.ObjectId, ref: "User", default: [] }],
+  created_at: { type: Date, default: Date.now() },
 });
 
 export const User: Model<IUser> =
