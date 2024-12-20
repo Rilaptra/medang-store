@@ -1,8 +1,9 @@
-import NextAuth, { AuthOptions } from "next-auth";
+import NextAuth, { AuthOptions, getServerSession } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { compare } from "bcryptjs";
 import connectDB from "@/lib/db/connect";
 import { User } from "@/lib/db/models/user.model";
+import { NextResponse } from "next/server";
 
 export const authOptions = {
   secret: "secret",
@@ -79,9 +80,20 @@ export const authOptions = {
 
       return session;
     },
+    redirect({ url, baseUrl }) {
+      return url;
+    },
   },
 } as AuthOptions;
 
 const handler = NextAuth(authOptions);
+
+export async function validation() {
+  const session = await getServerSession(authOptions);
+  if (!session) {
+    throw new Error("Session not found");
+  }
+  return session;
+}
 
 export { handler as GET, handler as POST };

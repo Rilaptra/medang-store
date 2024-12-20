@@ -1,6 +1,22 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
-
-export interface IUser extends Document {
+export interface IUser {
+  username: string;
+  hash: string;
+  email: string;
+  name?: string;
+  profile_picture?: string;
+  role: "member" | "admin" | "seller";
+  kelas?: string;
+  nomor_kelas?: string;
+  phone_number?: string;
+  bio?: string;
+  website_sosmed_link?: string;
+  verified: boolean;
+  followers: mongoose.Types.ObjectId[];
+  created_at: Date;
+  _id?: string;
+}
+export interface IUserDoc extends Document {
   username: string;
   hash: string;
   email: string;
@@ -17,7 +33,7 @@ export interface IUser extends Document {
   created_at: Date;
 }
 
-const UserSchema = new Schema<IUser>({
+const UserSchema = new Schema<IUserDoc>({
   username: { type: String, required: true, unique: true },
   hash: { type: String, required: true },
   email: { type: String, required: true, unique: true },
@@ -42,5 +58,5 @@ const UserSchema = new Schema<IUser>({
   created_at: { type: Date, default: Date.now() },
 });
 
-export const User: Model<IUser> =
-  mongoose.models.User || mongoose.model<IUser>("User", UserSchema);
+export const User: Model<IUserDoc> =
+  mongoose.models.User || mongoose.model<IUserDoc>("User", UserSchema);

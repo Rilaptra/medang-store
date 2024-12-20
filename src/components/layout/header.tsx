@@ -11,6 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useState } from "react";
+import { toast } from "sonner";
 
 export default function Header() {
   const { data: session } = useSession();
@@ -94,11 +95,14 @@ export default function Header() {
             <Link href="/products" className="block py-2">
               Products
             </Link>
-            <Link href="/sellers" className="block py-2">
-              Sellers
-            </Link>
+
             {session?.user ? (
               <>
+                {session.user.role !== "seller" && (
+                  <Link href="/sellers" className="block py-2">
+                    Sellers
+                  </Link>
+                )}
                 <Link href="/cart" className="block py-2">
                   Cart
                 </Link>
@@ -108,15 +112,18 @@ export default function Header() {
                 <Link href="/orders" className="block py-2">
                   Orders
                 </Link>
-                {/* {session.user.role === 'admin' && (
-                  <Link href="/admin" className="block py-2">
+                {session.user.role === "admin" && (
+                  <Link href="/admin/user" className="block py-2">
                     Admin Panel
                   </Link>
-                )} */}
+                )}
                 <Button
                   variant="ghost"
                   className="w-full justify-start"
-                  onClick={() => signOut()}
+                  onClick={() => {
+                    signOut();
+                    toast.success("Logout successful");
+                  }}
                 >
                   Logout
                 </Button>

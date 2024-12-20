@@ -63,7 +63,7 @@ export async function PATCH(req: NextRequest) {
 export async function DELETE(req: NextRequest) {
   try {
     await dbConnect();
-    const { userId } = await req.json();
+    const { userId }: { userId?: string } = await req.json();
 
     if (!userId) {
       return NextResponse.json(

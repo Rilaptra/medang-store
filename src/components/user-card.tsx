@@ -14,94 +14,21 @@ import {
 
 interface UserCardProps {
   user: IUser;
+  handleVerifyUpdate: (user: IUser) => void;
+  handleDeleteUser: (user: IUser) => void;
+  handleRoleUpdate: (
+    user: IUser,
+    newRole: "admin" | "member" | "seller"
+  ) => void;
 }
-const toast = {
-  success: (text: any) => console.log(text),
-  error: (text: any) => console.log(text),
-};
-const UserCard: React.FC<UserCardProps> = ({ user }) => {
+
+const UserCard: React.FC<UserCardProps> = ({
+  user,
+  handleVerifyUpdate,
+  handleDeleteUser,
+  handleRoleUpdate,
+}) => {
   const [open, setOpen] = useState(false);
-
-  const handleVerifyUpdate = async () => {
-    try {
-      const response = await fetch("/api/admin/user", {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ userId: user._id, verified: !user.verified }),
-      });
-
-      if (response.ok) {
-        toast.success(
-          `User has been ${
-            !user.verified ? "verified" : "unverified"
-          } successfully`
-        );
-        setOpen(false);
-        // Consider updating the user state here if needed
-        user.verified = !user.verified;
-      } else {
-        const errorData = await response.json();
-        toast.error(
-          `Failed to update user role: ${errorData.message || "Unknown error"}`
-        );
-      }
-    } catch (error: any) {
-      toast.error(`Failed to update user role: ${error.message}`);
-    }
-  };
-
-  const handleRoleUpdate = async (newRole: "admin" | "seller" | "member") => {
-    try {
-      const response = await fetch("/api/admin/user", {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ userId: user._id, role: newRole }),
-      });
-
-      if (response.ok) {
-        toast.success(`User role updated to ${newRole}`);
-        setOpen(false);
-        // Consider updating the user state here if needed
-        user.role = newRole;
-      } else {
-        const errorData = await response.json();
-        toast.error(
-          `Failed to update user role: ${errorData.message || "Unknown error"}`
-        );
-      }
-    } catch (error: any) {
-      toast.error(`Failed to update user role: ${error.message}`);
-    }
-  };
-
-  const handleDeleteUser = async () => {
-    try {
-      const response = await fetch("/api/admin/user", {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ userId: user._id }),
-      });
-
-      if (response.ok) {
-        toast.success("User deleted successfully");
-        setOpen(false);
-        // Consider redirecting or updating the UI here
-      } else {
-        const errorData = await response.json();
-        toast.error(
-          `Failed to delete user: ${errorData.message || "Unknown error"}`
-        );
-      }
-    } catch (error: any) {
-      toast.error(`Failed to delete user: ${error.message}`);
-    }
-  };
 
   return (
     <Card className="w-full max-w-md shadow-md bg-white rounded-lg border">
@@ -156,32 +83,29 @@ const UserCard: React.FC<UserCardProps> = ({ user }) => {
             <DropdownMenuTrigger asChild>
               <MoreVertical className="h-4 w-4 cursor-pointer text-gray-500 hover:text-gray-700" />
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-44">
+            <DropdownMenuContent
+              align="end"
+              className="transition w-44 bg-white"
+            >
               {!user.verified ? (
                 <DropdownMenuItem
                   className="cursor-pointer hover:bg-gray-100"
-                  onClick={() => handleVerifyUpdate()}
+                  onClick={() => handleVerifyUpdate(user)}
                 >
                   <VerifiedIcon className="mr-2 h-4 w-4" /> Set as Verified
                 </DropdownMenuItem>
               ) : (
                 <DropdownMenuItem
                   className="cursor-pointer hover:bg-gray-100"
-                  onClick={() => handleVerifyUpdate()}
+                  onClick={() => handleVerifyUpdate(user)}
                 >
                   <VerifiedIcon className="mr-2 h-4 w-4" /> Set as Unverified
                 </DropdownMenuItem>
               )}
-              <DropdownMenuItem
-                onClick={() => toast.success("anjayy")}
-                className="cursor-pointer text-red-500 focus:text-red-700 hover:bg-red-100"
-              >
-                <FaUserSlash className="mr-2 h-4 w-4" /> toast anjay
-              </DropdownMenuItem>
               {user.role !== "admin" && (
                 <DropdownMenuItem
                   className="cursor-pointer hover:bg-gray-100"
-                  onClick={() => handleRoleUpdate("admin")}
+                  onClick={() => handleRoleUpdate(user, "admin")}
                 >
                   <FaUserShield className="mr-2 h-4 w-4" /> Set as Admin
                 </DropdownMenuItem>
@@ -189,7 +113,7 @@ const UserCard: React.FC<UserCardProps> = ({ user }) => {
               {user.role !== "seller" && (
                 <DropdownMenuItem
                   className="cursor-pointer hover:bg-gray-100"
-                  onClick={() => handleRoleUpdate("seller")}
+                  onClick={() => handleRoleUpdate(user, "seller")}
                 >
                   <FaUser className="mr-2 h-4 w-4" /> Set as Seller
                 </DropdownMenuItem>
@@ -197,13 +121,13 @@ const UserCard: React.FC<UserCardProps> = ({ user }) => {
               {user.role !== "member" && (
                 <DropdownMenuItem
                   className="cursor-pointer hover:bg-gray-100"
-                  onClick={() => handleRoleUpdate("member")}
+                  onClick={() => handleRoleUpdate(user, "member")}
                 >
                   <FaUser className="mr-2 h-4 w-4" /> Set as Member
                 </DropdownMenuItem>
               )}
               <DropdownMenuItem
-                onClick={handleDeleteUser}
+                onClick={() => handleDeleteUser(user)}
                 className="cursor-pointer text-red-500 focus:text-red-700 hover:bg-red-100"
               >
                 <FaUserSlash className="mr-2 h-4 w-4" /> Delete Member

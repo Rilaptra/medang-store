@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useSession, signIn, SignInOptions } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { FormProvider, useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 export default function Register() {
   const { data: session } = useSession();
@@ -19,10 +20,10 @@ export default function Register() {
       const result = await response.json();
       if (result.error) {
         setError(result.error);
-        alert(result.error);
+        toast.error(result.error);
       } else {
-        signIn("credentials", { ...data, callbackUrl: "/" });
-        alert("success");
+        signIn("credentials", { ...data, callbackUrl: window.location.origin });
+        toast.success("success");
       }
     } catch (error: any) {
       setError(error);
