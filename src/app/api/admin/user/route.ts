@@ -24,6 +24,8 @@ export async function PATCH(req: NextRequest) {
     await dbConnect();
     const { userId, role, verified } = await req.json();
 
+    console.log(userId, role, verified);
+
     if (!userId) {
       return NextResponse.json(
         { message: "User ID is required" },
@@ -35,9 +37,17 @@ export async function PATCH(req: NextRequest) {
     if (role) {
       updateData.role = role;
     }
-    if (verified !== undefined) {
+    if (verified) {
       updateData.verified = verified;
+      // updateData.role =
+      //   verified && role === "member"
+      //     ? "seller"
+      //     : !verified && role === "seller"
+      //     ? "member"
+      //     : updateData.role;
+      console.log(updateData.role);
     }
+    console.log(updateData);
 
     const updatedUser = await User.findByIdAndUpdate(userId, updateData, {
       new: true,

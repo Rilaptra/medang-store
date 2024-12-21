@@ -13,12 +13,14 @@ export default function Home() {
           Your trusted marketplace for the school community. Buy and sell with
           confidence.
         </p>
-        <div className="space-x-4">
-          <Link href="/products">
-            <Button size="lg">Browse Products</Button>
+        <div className="flex flex-col gap-2 md:flex-row w-full max-w-md mx-auto p-2">
+          <Link href="/products" className="flex-1">
+            <Button size="lg" className="w-full">
+              Browse Products
+            </Button>
           </Link>
-          <Link href="/api/auth/register">
-            <Button variant="outline" size="lg">
+          <Link href="/api/auth/register" className="flex-1">
+            <Button variant="outline" size="lg" className="w-full">
               Start Selling
             </Button>
           </Link>

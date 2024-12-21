@@ -4,7 +4,7 @@ import { useSession, signIn, SignInOptions } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { FormProvider, useForm } from "react-hook-form";
 import { toast } from "sonner";
-
+// TODO: add more information, phone_number, etc.
 export default function Register() {
   const { data: session } = useSession();
   const [error, setError] = useState(null);

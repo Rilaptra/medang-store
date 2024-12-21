@@ -12,7 +12,7 @@ export interface IUser {
   bio?: string;
   website_sosmed_link?: string;
   verified: boolean;
-  followers: mongoose.Types.ObjectId[];
+  followers: Pick<IUser, "name" | "profile_picture" | "username">[];
   created_at: Date;
   _id?: string;
 }

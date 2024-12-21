@@ -59,7 +59,11 @@ export default function AdminDashboard() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ userId: user._id, verified: !user.verified }),
+        body: JSON.stringify({
+          userId: user._id,
+          verified: !user.verified,
+          role: user.role,
+        }),
       });
 
       if (response.ok) {
