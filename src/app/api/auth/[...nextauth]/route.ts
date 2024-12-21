@@ -3,7 +3,6 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { compare } from "bcryptjs";
 import connectDB from "@/lib/db/connect";
 import { User } from "@/lib/db/models/user.model";
-import { NextResponse } from "next/server";
 
 export const authOptions = {
   secret: "secret",
@@ -37,6 +36,7 @@ export const authOptions = {
           id: user.id,
           email: user.email,
           name: user.name,
+          username: user.username,
           role: user.role,
         };
       },
@@ -52,32 +52,29 @@ export const authOptions = {
     async jwt({ token, user }) {
       if (user) {
         // Ensure user has a role property before assigning
-        if (
-          typeof user === "object" &&
-          "role" in user &&
-          typeof user.role === "string"
-        ) {
-          token.role = user.role;
-        }
-        if (
-          typeof user === "object" &&
-          "id" in user &&
-          typeof user.id === "string"
-        ) {
-          token.id = user.id;
+        if (typeof user === "object") {
+          if ("role" in user && typeof user.role === "string") {
+            token.role = user.role;
+          }
+          if ("id" in user && typeof user.id === "string") {
+            token.id = user.id;
+          }
+          if ("username" in user && typeof user.username === "string") {
+            token.username = user.username;
+          }
         }
       }
       return token;
     },
     async session({ session, token }) {
-      if (session?.user && token?.role) {
+      if (session?.user) {
         session.user = {
           ...session.user,
           role: token.role as string,
           id: token.id as string,
+          username: token.username as string,
         };
       }
-
       return session;
     },
     redirect({ url, baseUrl }) {

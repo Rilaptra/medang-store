@@ -1,6 +1,20 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
+/**
+ * A utility function to merge tailwind classes, but with a more concise API than
+ * `twMerge(clsx(...))`.
+ *
+ * @param inputs - The class values to be merged.
+ * @returns A single class string that can be passed to elements.
+ *
+ * @example
+ * import { cn } from '@/lib/utils'
+ *
+ * const classes = cn('px-4', 'py-2', 'bg-blue-500 hover:bg-blue-700')
+ *
+ * // classes is now "px-4 py-2 bg-blue-500 hover:bg-blue-700"
+ */
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }

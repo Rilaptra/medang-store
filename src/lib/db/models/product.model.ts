@@ -11,7 +11,6 @@ export interface IProduct {
   seller_id: string;
   title: string;
   description: string;
-  price: number;
   discount: number;
   discount_value: number;
   discount_type: "percent" | "value";

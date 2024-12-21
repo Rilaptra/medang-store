@@ -1,12 +1,30 @@
 import { NextResponse } from "next/server";
 import { hash } from "bcryptjs";
 import connectDB from "@/lib/db/connect";
-import { User } from "@/lib/db/models/user.model";
+import { IUser, User } from "@/lib/db/models/user.model";
 
+interface RegisterData extends Partial<IUser> {
+  password?: string;
+}
 export async function POST(req: Request) {
   try {
-    const { username, email, password, name } = await req.json();
+    const {
+      username,
+      email,
+      password,
+      name,
+      bio,
+      phone_number,
+      website_sosmed_link,
+      kelas: kelasnokelas,
+    } = (await req.json()) as RegisterData;
 
+    if (!username || !email || !password) {
+      return NextResponse.json(
+        { error: "Missing required fields" },
+        { status: 400 }
+      );
+    }
     await connectDB();
 
     // Check if user already exists
@@ -22,6 +40,11 @@ export async function POST(req: Request) {
     }
 
     const hashedPassword = await hash(password, 12);
+    let kelas;
+    let nomor_kelas;
+    if (kelasnokelas) {
+      [, kelas, nomor_kelas] = kelasnokelas.match(/([\w-]+)(\d)/);
+    }
 
     const user = await User.create({
       username,
@@ -29,6 +52,11 @@ export async function POST(req: Request) {
       hash: hashedPassword,
       name,
       role: "member",
+      kelas,
+      nomor_kelas,
+      bio,
+      phone_number,
+      website_sosmed_link,
     });
 
     return NextResponse.json(

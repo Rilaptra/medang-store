@@ -1,3 +1,4 @@
+// pages/user/[username].tsx
 "use client";
 import { FC, useEffect, useState } from "react";
 import { useParams } from "next/navigation";
@@ -29,40 +30,42 @@ import { Skeleton } from "@/components/ui/skeleton";
 const UserPage: FC = () => {
   const { username } = useParams();
   const [user, setUser] = useState<IUser | null>(null);
-  const [product, setProduct] = useState<IProduct[] | null>([]);
+  const [products, setProducts] = useState<IProduct[] | null>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [isOpen, setIsOpen] = useState(false);
-  const [isAddOpen, setIsAddOpen] = useState(false);
+  const [isErrorOpen, setIsErrorOpen] = useState(false);
+  const [isAddProductOpen, setIsAddProductOpen] = useState(false);
   const { data: session } = useSession();
-  const [userNotFound, setUserNotFound] = useState(false);
 
-  const fetchProducts = async (user: IUser) => {
+  const handleFetchError = (message: string) => {
+    setError(message);
+    toast.error(message);
+    setIsErrorOpen(true);
+    setIsLoading(false);
+  };
+  const fetchProducts = async (userId: string) => {
     try {
-      const res = await fetch(`/api/products/${user._id}`);
+      const res = await fetch(`/api/products/${userId}`);
       if (!res.ok) {
         const errorData = await res.json();
         throw new Error(errorData.message || "Failed to fetch products.");
       }
-      const data: { data: IProduct[] } = await res.json();
-      setProduct(data.data);
+      const { data } = (await res.json()) as { data: IProduct[] };
+      setProducts(data);
     } catch (error: any) {
-      setError(error.message);
-      toast.error(error.message);
-      setIsOpen(true);
-    } finally {
-      setIsLoading(false);
+      handleFetchError(error.message);
     }
   };
+
   const fetchUser = async () => {
     setIsLoading(true);
     setError(null);
-    setUserNotFound(false);
     try {
       const response = await fetch(`/api/users/${username}?fetchProducts=true`);
       if (!response.ok) {
         if (response.status === 404) {
-          setUserNotFound(true);
+          handleFetchError(`User with username "${username}" not found`);
+          return;
         }
         const errorData = await response.json();
         throw new Error(
@@ -73,31 +76,26 @@ const UserPage: FC = () => {
         data: { user: IUser; products: IProduct[] };
       };
       setUser(data.user);
-      if (data.products) {
-        setProduct(data.products);
-      }
-    } catch (error: any) {
-      setError(error.message);
-      toast.error(error.message);
-      setIsOpen(true);
-    } finally {
+      setProducts(data.products || []);
       setIsLoading(false);
+    } catch (error: any) {
+      handleFetchError(error.message);
     }
   };
 
   useEffect(() => {
-    if (!user && username) {
+    if (username) {
       fetchUser();
     }
-  }, []);
+  }, [username]);
 
   useEffect(() => {
-    if (user && user.role === "seller") {
-      fetchProducts(user);
+    if (user && user?.role === "seller" && user._id) {
+      fetchProducts(user._id);
     }
-  }, [isAddOpen]);
+  }, [user, isAddProductOpen]);
 
-  if (isLoading)
+  if (isLoading) {
     return (
       <div className="container mx-auto py-8">
         <div className="flex flex-col gap-6">
@@ -135,6 +133,7 @@ const UserPage: FC = () => {
         </div>
       </div>
     );
+  }
 
   if (error) {
     return (
@@ -143,18 +142,15 @@ const UserPage: FC = () => {
           <CardContent className="p-6">
             <div className="flex flex-col items-center justify-center gap-2 py-4">
               <FaExclamationCircle className="h-8 w-8 text-gray-500" />
-              <p className="text-gray-500">
-                User with username{" "}
-                <span className="font-bold">"{username}"</span> not found
-              </p>
+              <p className="text-gray-500">{error}</p>
             </div>
           </CardContent>
         </Card>
         <ErrorDialog
           title="Error"
           message={error}
-          isOpen={isOpen}
-          onClose={() => setIsOpen(false)}
+          isOpen={isErrorOpen}
+          onClose={() => setIsErrorOpen(false)}
         />
       </div>
     );
@@ -168,6 +164,7 @@ const UserPage: FC = () => {
         <ArrowLeftIcon className="h-4 w-4" /> Back
       </Link>
       <div className="flex flex-col gap-6">
+        {/* User Card */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-4">
@@ -241,6 +238,7 @@ const UserPage: FC = () => {
           )}
         </Card>
 
+        {/* Products */}
         {user.role === "seller" && (
           <Card>
             <CardHeader>
@@ -249,21 +247,22 @@ const UserPage: FC = () => {
 
             <CardContent className="flex flex-col items-center justify-center p-6">
               <AddProductDialog
-                isOpen={isAddOpen}
-                setIsOpen={setIsAddOpen}
+                isOpen={isAddProductOpen}
+                setIsOpen={setIsAddProductOpen}
                 seller={user}
               />
             </CardContent>
 
             <CardContent>
-              {product ? (
-                <div className="flex flex-wrap gap-4">
-                  {product.map((item, i) => (
+              {products && products.length > 0 ? (
+                <div className="flex flex-wrap gap-4 justify-center">
+                  {products.map((item, i) => (
                     <ProductCard
                       product={item}
                       key={i}
                       isLoading={isLoading}
                       user={user}
+                      onProductChange={fetchUser} // Pass the callback here
                     />
                   ))}
                 </div>

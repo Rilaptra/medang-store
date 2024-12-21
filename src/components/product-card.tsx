@@ -1,3 +1,5 @@
+// components/product-card.tsx
+"use client";
 import React, { useState } from "react";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -19,29 +21,34 @@ import {
 } from "@radix-ui/react-dropdown-menu";
 import { ChevronDownIcon } from "lucide-react";
 import { IUser } from "@/lib/db/models/user.model";
+import { FaEdit, FaTrash } from "react-icons/fa";
+import { EditProductDialog } from "./edit-product-dialog";
+import { DeleteProductDialog } from "./delete-product-dialog";
 
 interface ProductCardProps {
   product: IProduct;
   isLoading?: boolean;
   user: IUser;
+  onProductChange: () => void; // Add this line
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({
   product,
   isLoading,
   user,
+  onProductChange, // Add this line
 }) => {
   const [selectedVariant, setSelectedVariant] = useState<number>(0);
   const { theme } = useTheme();
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const handleAddToCart = () => {
     toast.success(`Added ${product.title} to cart!`);
     // tambahkan logic untuk keranjang belanja disini
   };
 
-  const currentPrice = product.variations?.length
-    ? product.variations[selectedVariant]?.price
-    : product.price;
+  const currentPrice = product.variations[selectedVariant]?.price;
 
   const images = product.variations?.length
     ? product.variations[selectedVariant]?.images
@@ -52,10 +59,10 @@ const ProductCard: React.FC<ProductCardProps> = ({
   const discountPercentage =
     product.discount_type === "percent"
       ? product.discount
-      : (product.discount_value / product.price) * 100;
+      : (product.discount_value / currentPrice) * 100;
 
   const discountPriceVariant =
-    product.discount > 0
+    product.discount > 0 || product.discount_value > 0
       ? currentPrice -
         (product.discount_type === "percent"
           ? (currentPrice * product.discount) / 100
@@ -86,8 +93,35 @@ const ProductCard: React.FC<ProductCardProps> = ({
   };
 
   return (
-    <Card className="w-fit dark:hover:bg-gray-900 hover:bg-gray-200 rounded-lg">
+    <Card className="w-fit min-w-80 dark:hover:bg-gray-900 relative hover:bg-gray-200 rounded-lg">
       {renderImage()}
+      <div className="absolute top-1 right-1 flex gap-1">
+        <Button
+          onClick={() => setIsEditModalOpen(true)}
+          className="bg-white dark:bg-black rounded-full aspect-square p-0 hover:bg-gray-900"
+        >
+          <FaEdit className="dark:text-white text-gray-600" />
+        </Button>
+        <Button
+          onClick={() => setIsDeleteModalOpen(true)}
+          className="bg-white dark:bg-black rounded-full aspect-square p-0 hover:bg-gray-900"
+          variant="destructive"
+        >
+          <FaTrash className="dark:text-white text-gray-600" />
+        </Button>
+      </div>
+      <EditProductDialog
+        isOpen={isEditModalOpen}
+        setIsOpen={setIsEditModalOpen}
+        product={product}
+        onProductUpdated={onProductChange} // Pass the callback here
+      />
+      <DeleteProductDialog
+        isOpen={isDeleteModalOpen}
+        setIsOpen={setIsDeleteModalOpen}
+        product={product}
+        onProductDeleted={onProductChange} // Pass the callback here
+      />
       <CardContent className="space-y-2 py-4">
         {isLoading ? (
           <Skeleton className="h-4 w-3/4 rounded-md" />
@@ -110,7 +144,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
             <Skeleton className="h-4 w-1/4 rounded-md" />
           ) : (
             <>
-              {product.discount > 0 && (
+              {(product.discount > 0 || product.discount_value > 0) && (
                 <Badge variant="destructive">
                   -{Math.round(discountPercentage)}%
                 </Badge>
@@ -133,11 +167,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
                     theme === "dark" ? "text-gray-400" : "text-gray-500"
                   }`}
                 >
-                  {formatPrice(
-                    product.variations?.length
-                      ? product.variations[selectedVariant]?.price
-                      : product.price
-                  )}
+                  {formatPrice(product.variations[selectedVariant]?.price)}
                 </span>
               )}
               <h3 className="text-xl font-semibold">

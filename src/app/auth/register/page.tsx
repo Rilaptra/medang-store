@@ -2,16 +2,154 @@
 import { useState } from "react";
 import { useSession, signIn, SignInOptions } from "next-auth/react";
 import { Button } from "@/components/ui/button";
-import { FormProvider, useForm } from "react-hook-form";
+import {
+  FormProvider,
+  RegisterOptions,
+  useForm,
+  useFormContext,
+} from "react-hook-form";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-// TODO: add more information, phone_number, etc.
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
+import { Loader2 } from "lucide-react";
+import {
+  FaEnvelope,
+  FaGlobe,
+  FaGraduationCap,
+  FaLock,
+  FaPhone,
+  FaUser,
+} from "react-icons/fa";
+import { IconType } from "react-icons/lib";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { ChevronDown } from "lucide-react";
+import { BsFillChatSquareTextFill } from "react-icons/bs";
+
+interface NewFieldProps {
+  name: string;
+  type?: string;
+  options?: RegisterOptions<SignInOptions>;
+  title?: string;
+  icon?: IconType;
+}
+
+const NewField: React.FC<NewFieldProps> = ({
+  name,
+  type,
+  options,
+  icon,
+  title,
+}) => {
+  const {
+    register,
+    formState: { errors },
+  } = useFormContext<SignInOptions>();
+
+  return (
+    <div className="grid gap-2">
+      <Label htmlFor={name} className="flex justify-start">
+        {icon && <span className="mr-2">{icon({})}</span>}
+        {title || name.charAt(0).toUpperCase() + name.slice(1)}
+      </Label>
+      <Input
+        type={type}
+        id={name}
+        {...register(name, options)}
+        className={cn(
+          "border dark:border-slate-700 focus-visible:ring-2 focus-visible:ring-blue-500 focus:outline-none",
+          errors[name] ? "ring-red-500" : ""
+        )}
+      />
+      {errors[name] && errors[name].message && (
+        <span className="text-red-500 text-xs">
+          {typeof errors[name].message === "string"
+            ? errors[name].message
+            : "An error occured"}
+        </span>
+      )}
+    </div>
+  );
+};
+
+interface SelectFieldProps {
+  name: string;
+  icon?: IconType;
+}
+const SelectField: React.FC<SelectFieldProps> = ({ name, icon }) => {
+  const {
+    formState: { errors },
+    setValue,
+  } = useFormContext<SignInOptions>();
+
+  return (
+    <div className="grid gap-2">
+      <Label htmlFor={name} className="flex justify-start">
+        {icon && <span className="mr-2">{icon({})}</span>}
+        {name.charAt(0).toUpperCase() + name.slice(1)}
+      </Label>
+      <Select onValueChange={(value) => setValue(name, value)}>
+        <SelectTrigger
+          className={cn("w-full", errors[name] ? "ring-red-500" : "")}
+        >
+          <SelectValue placeholder={`Select ${name}`} />
+        </SelectTrigger>
+        <SelectContent>
+          {["X", "XI", "XII"].flatMap((item) => {
+            const items = [];
+            for (let i = 1; i <= 9; i++) {
+              if (item === "X") {
+                items.push(
+                  <SelectItem
+                    key={`${item}-E${i}`}
+                    value={`${item}-E${i}`}
+                  >{`${item}-E${i}`}</SelectItem>
+                );
+              } else if (item === "XII" && i > 8) {
+                continue;
+              } else {
+                items.push(
+                  <SelectItem
+                    key={`${item}-F${i}`}
+                    value={`${item}-F${i}`}
+                  >{`${item}-F${i}`}</SelectItem>
+                );
+              }
+            }
+            return items;
+          })}
+        </SelectContent>
+      </Select>
+      {errors[name] && (
+        <span className="text-red-500 text-xs">
+          {typeof errors[name].message === "string"
+            ? errors[name].message
+            : "An error occured"}
+        </span>
+      )}
+    </div>
+  );
+};
+
 export default function Register() {
   const { data: session } = useSession();
-  const [error, setError] = useState(null);
-  const methods = useForm();
+  const [error, setError] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isOptionalOpen, setIsOptionalOpen] = useState(false);
+  const methods = useForm<SignInOptions>();
+  const router = useRouter();
 
   const onSubmit = async (data: SignInOptions | undefined) => {
     try {
+      setIsLoading(true);
       const response = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -22,130 +160,149 @@ export default function Register() {
         setError(result.error);
         toast.error(result.error);
       } else {
-        signIn("credentials", { ...data, callbackUrl: window.location.origin });
-        toast.success("success");
+        signIn(
+          "credentials",
+          {
+            ...data,
+          },
+          {
+            callbackUrl: "/",
+          }
+        );
+        toast.success("Signed up successfully");
       }
     } catch (error: any) {
       setError(error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   if (session) {
-    return <p>You are already signed in.</p>;
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-slate-100 dark:bg-black">
+        <Card className="w-full max-w-md">
+          <CardHeader>
+            <CardTitle className="text-center">
+              You are already signed in.
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-4">
+            <Button onClick={() => router.push("/")} className="w-full">
+              Go Home
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
   }
 
   return (
     <FormProvider {...methods}>
-      <form
-        onSubmit={methods.handleSubmit(onSubmit)}
-        className="flex flex-col gap-4 p-6 rounded-lg shadow-md bg-white dark:bg-gray-800 w-full max-w-md mx-auto my-5"
-      >
-        <div className="flex flex-col">
-          <label
-            htmlFor="username"
-            className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-          >
-            Username
-          </label>
-          <input
-            type="text"
-            id="username"
-            {...methods.register("username", {
-              required: "Username is required",
-            })}
-            className="mt-1 p-2 border rounded-md w-full text-gray-900 dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
-          />
-          {methods.formState.errors.username?.message && (
-            <span className="text-red-500 text-xs">
-              {typeof methods.formState.errors.username.message === "string"
-                ? methods.formState.errors.username.message
-                : "An error occured"}
-            </span>
-          )}{" "}
-        </div>
-        <div className="flex flex-col">
-          <label
-            htmlFor="email"
-            className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-          >
-            Email
-          </label>
-          <input
-            type="email"
-            id="email"
-            {...methods.register("email", {
-              required: "Email is required",
-              pattern: {
-                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                message: "Invalid email address",
-              },
-            })}
-            className="mt-1 p-2 border rounded-md w-full text-gray-900 dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
-          />
-          {methods.formState.errors.email && (
-            <span className="text-red-500 text-xs">
-              {typeof methods.formState.errors.email.message === "string"
-                ? methods.formState.errors.email.message
-                : "An error occured"}
-            </span>
-          )}
-        </div>
-        <div className="flex flex-col">
-          <label
-            htmlFor="password"
-            className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-          >
-            Password
-          </label>
-          <input
-            type="password"
-            id="password"
-            {...methods.register("password", {
-              required: "Password is required",
-              minLength: {
-                value: 6,
-                message: "Password must be at least 6 characters",
-              },
-            })}
-            className="mt-1 p-2 border rounded-md w-full text-gray-900 dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
-          />
-          {methods.formState.errors.password && (
-            <span className="text-red-500 text-xs">
-              {typeof methods.formState.errors.password.message === "string"
-                ? methods.formState.errors.password.message
-                : "An error occured"}
-            </span>
-          )}
-        </div>
-        <div className="flex flex-col">
-          <label
-            htmlFor="name"
-            className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-          >
-            Name
-          </label>
-          <input
-            type="text"
-            id="name"
-            {...methods.register("name", { required: "Name is required" })}
-            className="mt-1 p-2 border rounded-md w-full text-gray-900 dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
-          />
-          {methods.formState.errors.name && (
-            <span className="text-red-500 text-xs">
-              {typeof methods.formState.errors.name.message === "string"
-                ? methods.formState.errors.name.message
-                : "An error occured"}
-            </span>
-          )}
-        </div>
-        <Button
-          type="submit"
-          className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-        >
-          Register
-        </Button>
-        {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
-      </form>
+      <div className="flex flex-col items-center justify-center min-h-screen bg-slate-100 dark:bg-black">
+        <Card className="w-full max-w-md">
+          <CardHeader>
+            <CardTitle className="text-center">Register</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form
+              onSubmit={methods.handleSubmit(onSubmit)}
+              className="flex flex-col gap-4"
+            >
+              <NewField
+                name="username"
+                type="text"
+                options={{
+                  required: "Username is required",
+                  maxLength: 20,
+                  pattern: {
+                    value: /^[a-z]{2,}$/,
+                    message:
+                      "Username must be lowercase and at least 2 characters",
+                  },
+                }}
+                icon={() => <FaUser />}
+              />
+              <NewField
+                name="email"
+                type="email"
+                icon={() => <FaEnvelope />}
+                options={{
+                  required: "Email is required",
+                  pattern: {
+                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                    message: "Invalid email address",
+                  },
+                }}
+              />
+              <NewField
+                name="password"
+                type="password"
+                icon={() => <FaLock />}
+                options={{
+                  required: "Password is required",
+                  minLength: {
+                    value: 6,
+                    message: "Password must be at least 6 characters",
+                  },
+                }}
+              />
+
+              <Card>
+                <CardHeader>
+                  <div
+                    className="flex items-center justify-between cursor-pointer"
+                    onClick={() => setIsOptionalOpen(!isOptionalOpen)}
+                  >
+                    <Label>Optional Information</Label>
+                    <ChevronDown
+                      className={cn("h-4 w-4 transition-transform", {
+                        "rotate-180": isOptionalOpen,
+                      })}
+                    />
+                  </div>
+                </CardHeader>
+                {isOptionalOpen && (
+                  <CardContent>
+                    <div className="grid gap-2 mt-2">
+                      <NewField name="name" icon={() => <FaUser />} />
+                      <NewField
+                        name="bio"
+                        icon={() => <BsFillChatSquareTextFill />}
+                      />
+                      <SelectField
+                        name="kelas"
+                        icon={() => <FaGraduationCap />}
+                      />
+                      <NewField
+                        name="phone_ number"
+                        title="Phone Number"
+                        icon={() => <FaPhone />}
+                      />
+                      <NewField
+                        name="website_sosmed_link"
+                        title="Website / Social Media"
+                        icon={() => <FaGlobe />}
+                      />
+                    </div>
+                  </CardContent>
+                )}
+              </Card>
+              <Button type="submit" variant="default" disabled={isLoading}>
+                {isLoading ? (
+                  <div className="flex items-center">
+                    <Loader2 className="animate-spin" />
+                    <span className="ml-2">Signing up...</span>
+                  </div>
+                ) : (
+                  "Register"
+                )}
+              </Button>
+              {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
+            </form>
+          </CardContent>
+        </Card>
+      </div>
     </FormProvider>
   );
 }

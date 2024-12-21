@@ -13,6 +13,7 @@ import {
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import useTheme from "next-theme";
+import { FaRegistered, FaSignInAlt, FaUser } from "react-icons/fa";
 
 export default function Header() {
   const { data: session } = useSession();
@@ -22,6 +23,10 @@ export default function Header() {
 
   useEffect(() => {
     setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    console.log(session?.user);
   }, []);
 
   if (!mounted) {
@@ -58,7 +63,10 @@ export default function Header() {
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
                     <DropdownMenuItem>
-                      <Link className="w-full h-full" href="/profile">
+                      <Link
+                        className="w-full h-full"
+                        href={`/${session.user.username}`}
+                      >
                         Profile
                       </Link>
                     </DropdownMenuItem>
@@ -123,17 +131,20 @@ export default function Header() {
             <Link href="/products" className="block py-2 w-full h-full">
               Products
             </Link>
+            {session?.user.role !== "seller" && (
+              <Link href="/sellers" className="block py-2 w-full h-full">
+                Sellers
+              </Link>
+            )}
             {session?.user ? (
               <>
-                {session.user.role !== "seller" && (
-                  <Link href="/sellers" className="block py-2 w-full h-full">
-                    Sellers
-                  </Link>
-                )}
                 <Link href="/cart" className="block py-2 w-full h-full">
                   Cart
                 </Link>
-                <Link href="/profile" className="block py-2 w-full h-full">
+                <Link
+                  href={`/${session.user.username}`}
+                  className="block py-2 w-full h-full"
+                >
                   Profile
                 </Link>
                 <Link href="/orders" className="block py-2 w-full h-full">
@@ -145,7 +156,7 @@ export default function Header() {
                   </Link>
                 )}
                 <Button
-                  variant="ghost"
+                  variant="destructive"
                   className="w-full justify-start"
                   onClick={() => {
                     signOut();
@@ -154,37 +165,40 @@ export default function Header() {
                 >
                   Logout
                 </Button>
-
-                <Button
-                  variant="ghost"
-                  className="w-full justify-start"
-                  onClick={() => setTheme(theme === "light" ? "dark" : "light")}
-                >
-                  {theme === "light" ? (
-                    <>
-                      <Moon className="h-5 w-5 mr-2" />
-                      Dark Mode
-                    </>
-                  ) : (
-                    <>
-                      <Sun className="h-5 w-5 mr-2" />
-                      Light Mode
-                    </>
-                  )}
-                </Button>
               </>
             ) : (
-              <div className="space-y-2">
-                <Link href="/auth/signin">
-                  <Button variant="ghost" className="w-full">
+              <div className="flex gap-5">
+                <Link href="/auth/signin" className="w-full">
+                  <Button variant="secondary" className="w-full flex gap-2">
+                    <FaSignInAlt />
                     Sign In
                   </Button>
                 </Link>
-                <Link href="/auth/register">
-                  <Button className="w-full">Register</Button>
+                <Link href="/auth/register" className="w-full">
+                  <Button className="w-full flex gap-2">
+                    <FaUser />
+                    Register
+                  </Button>
                 </Link>
               </div>
             )}
+            <Button
+              variant="ghost"
+              className="w-full justify-center"
+              onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+            >
+              {theme === "light" ? (
+                <>
+                  <Moon className="h-5 w-5 mr-2" />
+                  Dark Mode
+                </>
+              ) : (
+                <>
+                  <Sun className="h-5 w-5 mr-2" />
+                  Light Mode
+                </>
+              )}
+            </Button>
           </div>
         )}
       </div>

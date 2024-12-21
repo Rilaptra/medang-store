@@ -1,3 +1,4 @@
+// components/edit-product-dialog.tsx
 import React, { useState } from "react";
 import {
   Dialog,
@@ -5,7 +6,6 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useForm, useFieldArray } from "react-hook-form";
@@ -20,36 +20,28 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { IUser } from "@/lib/db/models/user.model";
 import { IProduct, IVariation } from "@/lib/db/models/product.model";
 import { FaPlus, FaMinus, FaImage, FaPlusCircle } from "react-icons/fa";
 import { IoIosClose } from "react-icons/io";
 import { Loader2 } from "lucide-react";
 
-interface AddProductDialogProps {
-  seller: IUser;
+interface EditProductDialogProps {
+  product: IProduct;
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  onProductUpdated: () => void; // Add this line
 }
 
-export const AddProductDialog: React.FC<AddProductDialogProps> = ({
-  seller,
+export const EditProductDialog: React.FC<EditProductDialogProps> = ({
+  product,
   isOpen,
   setIsOpen,
+  onProductUpdated, // Add this line
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const form = useForm<IProduct>({
     defaultValues: {
-      seller_id: seller._id,
-      title: "",
-      description: "",
-      discount: 0,
-      discount_value: 0,
-      discount_type: "percent",
-      category: "",
-      variations: [] as IVariation[],
-      isActive: true,
-      isPreOrder: false,
+      ...product,
     } as IProduct,
   });
 
@@ -79,8 +71,8 @@ export const AddProductDialog: React.FC<AddProductDialogProps> = ({
     }
     setIsLoading(true);
     try {
-      const response = await fetch(`/api/products/${seller.username}`, {
-        method: "POST",
+      const response = await fetch(`/api/products/${product._id}`, {
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
@@ -88,19 +80,20 @@ export const AddProductDialog: React.FC<AddProductDialogProps> = ({
       });
 
       if (response.ok) {
-        toast.success("Product added successfully");
+        toast.success("Product updated successfully");
         form.reset();
         setIsOpen(false);
+        onProductUpdated(); // Call the callback
       } else {
         const errorData = await response.json();
         toast.error(
-          `Failed to add product: ${
+          `Failed to update product: ${
             errorData.message || "Something went wrong"
           }`
         );
       }
     } catch (error: any) {
-      toast.error(`Failed to add product: ${error.message}`);
+      toast.error(`Failed to update product: ${error.message}`);
     } finally {
       setIsLoading(false);
     }
@@ -140,18 +133,14 @@ export const AddProductDialog: React.FC<AddProductDialogProps> = ({
     const updatedImages = currentImages.filter((_, i) => i !== imageIndex);
     form.setValue(`variations.${index}.images`, updatedImages);
   };
+
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>
-        <Button variant="outline" className="w-full">
-          Add Product
-        </Button>
-      </DialogTrigger>
       <DialogContent className="sm:max-w-[800px] max-h-[80vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Add New Product</DialogTitle>
+          <DialogTitle>Edit Product</DialogTitle>
           <DialogDescription>
-            Fill in the details for the new product.
+            Edit the details for the product.
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
@@ -344,7 +333,6 @@ export const AddProductDialog: React.FC<AddProductDialogProps> = ({
                 </div>
               ))}
             </div>
-
             <Button
               type="submit"
               disabled={isLoading}
@@ -353,7 +341,7 @@ export const AddProductDialog: React.FC<AddProductDialogProps> = ({
               {isLoading ? (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               ) : null}
-              <FaPlusCircle className="mr-2" /> Add Product
+              <FaPlusCircle className="mr-2" /> Update Product
             </Button>
           </form>
         </Form>
