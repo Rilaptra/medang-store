@@ -1,22 +1,21 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
-import { IUser } from "./user.model";
 
 export interface IVariation {
   variant_title: string;
   price: number;
   stock: number;
   images: string[];
-}
-export interface IProduct {
-  seller_id: string;
-  title: string;
-  description: string;
   discount: number;
   discount_value: number;
   discount_type: "percent" | "value";
+}
+export interface IProduct {
+  seller_id: mongoose.Types.ObjectId;
+  title: string;
+  description: string;
   category: string;
   variations: IVariation[];
-  purchased_by: Pick<IUser, "username" | "website_sosmed_link" | "name">[];
+  purchased_by: mongoose.Types.ObjectId[];
   isActive: boolean;
   isPreOrder: boolean;
   created_at: Date;
@@ -25,15 +24,12 @@ export interface IProduct {
 }
 
 export interface IProductDoc extends Document {
-  seller_id: string;
+  seller_id: mongoose.Types.ObjectId;
   title: string;
   description: string;
-  discount: number;
-  discount_value: number;
-  discount_type: "percent" | "value";
   category: string;
   variations: IVariation[];
-  purchased_by: Pick<IUser, "username" | "website_sosmed_link" | "name">[];
+  purchased_by: mongoose.Types.ObjectId[];
   isActive: boolean;
   isPreOrder: boolean;
   created_at: Date;
@@ -41,16 +37,9 @@ export interface IProductDoc extends Document {
 }
 
 const ProductSchema = new Schema<IProductDoc>({
-  seller_id: { type: String, required: true },
+  seller_id: { type: Schema.Types.ObjectId, ref: "User", required: true },
   title: { type: String, required: true },
   description: { type: String, maxlength: 15000 },
-  discount: { type: Number, min: 0, max: 100, default: 0 },
-  discount_value: { type: Number, default: 0 },
-  discount_type: {
-    type: String,
-    enum: ["percent", "value"],
-    default: "percent",
-  },
   category: String,
   variations: [
     {
@@ -58,6 +47,13 @@ const ProductSchema = new Schema<IProductDoc>({
       price: Number,
       stock: Number,
       images: [String],
+      discount: { type: Number, min: 0, max: 100, default: 0 },
+      discount_value: { type: Number, default: 0 },
+      discount_type: {
+        type: String,
+        enum: ["percent", "value"],
+        default: "percent",
+      },
     },
   ],
   purchased_by: [{ type: Schema.Types.ObjectId, ref: "User" }],

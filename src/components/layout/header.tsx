@@ -3,7 +3,15 @@
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
 import { Button } from "@/components/ui/button";
-import { ShoppingCart, User, Menu, Sun, Moon } from "lucide-react";
+import {
+  ShoppingCart,
+  User,
+  Menu,
+  Sun,
+  Moon,
+  House,
+  Search,
+} from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,13 +21,17 @@ import {
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import useTheme from "next-theme";
-import { FaRegistered, FaSignInAlt, FaUser } from "react-icons/fa";
+import { FaSignInAlt, FaUser } from "react-icons/fa";
+import { Card } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { useRouter } from "next/navigation";
 
 export default function Header() {
   const { data: session } = useSession();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     setMounted(true);
@@ -35,19 +47,43 @@ export default function Header() {
 
   return (
     <header className="border-b">
-      <div className="container mx-auto px-4 py-4">
+      <div className="container mx-auto p-4">
         <div className="flex items-center justify-between">
-          <Link href="/" className="text-2xl font-bold">
-            Medang Store
+          <Link href="/" className="text-2xl font-bold flex gap-2 items-center">
+            <Button variant="link" size="icon">
+              <House className="h-5 w-5" />{" "}
+            </Button>
+            <span className="hidden sm:inline-block whitespace-nowrap">
+              Medang Market
+            </span>
           </Link>
 
+          <Card className="w-full mx-4">
+            <Label htmlFor="search" className="flex items-center">
+              <div className="h-10 w-10 flex justify-center items-center">
+                <Search className="h-5 w-5" />
+              </div>
+              <input
+                type="text"
+                id="search"
+                name="search"
+                className="flex h-10 w-full rounded-md bg-background px-3 py-2 text-sm outline-none"
+                placeholder="Cari..."
+                onKeyDown={(event) => {
+                  if (event.key === "Enter") {
+                    const query = (
+                      event.target as HTMLInputElement
+                    ).value.trim();
+                    if (query) {
+                      router.push(`/?search=${encodeURIComponent(query)}`);
+                    }
+                  }
+                }}
+              />
+            </Label>
+          </Card>
+
           <div className="hidden md:flex items-center space-x-6">
-            <Link href="/products" className="hover:text-primary line-through">
-              Products
-            </Link>
-            <Link href="/sellers" className="hover:text-primary line-through">
-              Sellers
-            </Link>
             {session?.user ? (
               <>
                 <Link href="/cart">
@@ -104,7 +140,7 @@ export default function Header() {
                 </Button>
               </>
             ) : (
-              <div className="space-x-2">
+              <div className="flex gap-2">
                 <Link className="w-full h-full" href="/auth/signin">
                   <Button variant="ghost">Sign In</Button>
                 </Link>
@@ -128,14 +164,6 @@ export default function Header() {
         {/* Mobile menu */}
         {isMenuOpen && (
           <div className="md:hidden mt-4 space-y-4">
-            <Link href="/products" className="block py-2 w-full h-full">
-              Products
-            </Link>
-            {session?.user.role !== "seller" && (
-              <Link href="/sellers" className="block py-2 w-full h-full">
-                Sellers
-              </Link>
-            )}
             {session?.user ? (
               <>
                 <Link href="/cart" className="block py-2 w-full h-full">

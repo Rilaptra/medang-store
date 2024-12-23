@@ -12,7 +12,7 @@ export interface IUser {
   bio?: string;
   website_sosmed_link?: string;
   verified: boolean;
-  followers: Pick<IUser, "name" | "profile_picture" | "username">[];
+  followers: mongoose.Types.ObjectId[];
   created_at: Date;
   _id?: string;
 }
@@ -55,7 +55,7 @@ const UserSchema = new Schema<IUserDoc>({
   },
   verified: { type: Boolean, default: false },
   followers: [{ type: Schema.Types.ObjectId, ref: "User", default: [] }],
-  created_at: { type: Date, default: Date.now() },
+  created_at: { type: Date, default: Date.now },
 });
 
 export const User: Model<IUserDoc> =

@@ -1,9 +1,12 @@
+"use server";
 import mongoose, { Mongoose } from "mongoose";
 
 const MONGODB_URI = process.env.MONGODB_URI;
 
 if (!MONGODB_URI) {
-  throw new Error("Please add your Mongo URI to .env.local");
+  throw new Error(
+    `Please add your Mongo URI to .env.local, you mongo: ${MONGODB_URI}`
+  );
 }
 
 let cached = global.mongoose;

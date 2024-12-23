@@ -9,6 +9,7 @@ const nextConfig: NextConfig = {
       { hostname: "picsum.photos" },
     ],
   },
+  productionBrowserSourceMaps: true,
 };
 
 export default nextConfig;

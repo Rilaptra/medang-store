@@ -1,19 +1,36 @@
 "use client";
+import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import SearchPage from "@/components/search-page";
 
 export default function Home() {
+  const params = useSearchParams();
+  const searchQuery = params.get("search");
+  const category = params.get("category");
+
+  if (searchQuery)
+    return <SearchPage category={category} query={searchQuery} />;
+
   return (
     <div className="container mx-auto px-4 py-8">
-      <section className="text-center py-20 bg-gradient-to-r from-primary/10 to-primary/5 rounded-lg">
-        <h1 className="text-4xl md:text-6xl font-bold mb-6">
-          Welcome to SchoolMarket
+      <section className="text-center py-20 bg-gradient-to-r from-primary/10 to-primary/0 rounded-lg relative">
+        <div
+          className="absolute inset-0 rounded-lg bg-gradient-to-r from-primary/10 to-primary/0 z-0 border-2 border-transparent border-r-0 border-l-0k"
+          style={{
+            mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+            maskComposite: "exclude",
+          }}
+        ></div>
+        <h1 className="text-4xl md:text-6xl font-bold mb-6 relative z-10">
+          Welcome to Medang Market
         </h1>
-        <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
+        <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto relative z-10">
           Your trusted marketplace for the school community. Buy and sell with
           confidence.
         </p>
-        <div className="flex flex-col gap-2 md:flex-row w-full max-w-md mx-auto p-2">
+        <div className="flex flex-col gap-2 md:flex-row w-full max-w-md mx-auto p-2 relative z-10">
           <Link href="/products" className="flex-1">
             <Button size="lg" className="w-full">
               Browse Products

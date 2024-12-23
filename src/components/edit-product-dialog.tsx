@@ -29,19 +29,22 @@ interface EditProductDialogProps {
   product: IProduct;
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  onProductUpdated: () => void; // Add this line
+  onProductUpdated: () => void;
 }
 
 export const EditProductDialog: React.FC<EditProductDialogProps> = ({
   product,
   isOpen,
   setIsOpen,
-  onProductUpdated, // Add this line
+  onProductUpdated,
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const form = useForm<IProduct>({
     defaultValues: {
       ...product,
+      variations: product.variations.map((variation) => ({
+        ...variation,
+      })),
     } as IProduct,
   });
 
@@ -56,6 +59,9 @@ export const EditProductDialog: React.FC<EditProductDialogProps> = ({
       price: 0,
       stock: 0,
       images: [],
+      discount: 0,
+      discount_value: 0,
+      discount_type: "percent",
     });
   };
 
@@ -69,6 +75,7 @@ export const EditProductDialog: React.FC<EditProductDialogProps> = ({
       toast.error("Please add at least one image for each variation");
       return;
     }
+    console.log(values, "ini values");
     setIsLoading(true);
     try {
       const response = await fetch(`/api/products/${product._id}`, {
@@ -83,7 +90,7 @@ export const EditProductDialog: React.FC<EditProductDialogProps> = ({
         toast.success("Product updated successfully");
         form.reset();
         setIsOpen(false);
-        onProductUpdated(); // Call the callback
+        onProductUpdated();
       } else {
         const errorData = await response.json();
         toast.error(
@@ -261,6 +268,69 @@ export const EditProductDialog: React.FC<EditProductDialogProps> = ({
                               placeholder="Stock available"
                               {...field}
                             />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name={`variations.${index}.discount`}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Discount</FormLabel>
+                          <FormControl>
+                            <Input
+                              type="number"
+                              placeholder="Discount percentage"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name={`variations.${index}.discount_value`}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Discount Value</FormLabel>
+                          <FormControl>
+                            <Input
+                              type="number"
+                              placeholder="Discount value"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name={`variations.${index}.discount_type`}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Discount Type</FormLabel>
+                          <FormControl>
+                            <select
+                              {...field}
+                              className="border rounded-md py-2 px-3 w-full focus:outline-none focus:ring-2 focus:ring-primary-500 bg-transparent dark:border-zinc-700 dark:text-zinc-300 dark:focus:ring-zinc-500"
+                            >
+                              <option
+                                value="percent"
+                                className="bg-transparent dark:bg-zinc-800"
+                              >
+                                Percent
+                              </option>
+                              <option
+                                value="value"
+                                className="bg-transparent dark:bg-zinc-800"
+                              >
+                                Value
+                              </option>
+                            </select>
                           </FormControl>
                           <FormMessage />
                         </FormItem>

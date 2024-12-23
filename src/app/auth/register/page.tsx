@@ -7,6 +7,7 @@ import {
   RegisterOptions,
   useForm,
   useFormContext,
+  UseFormRegister,
 } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -34,17 +35,45 @@ import {
 import { ChevronDown } from "lucide-react";
 import { BsFillChatSquareTextFill } from "react-icons/bs";
 
+// --- Types ---
+interface FormValues extends SignInOptions {
+  name?: string;
+  bio?: string;
+  kelas?: string;
+  phone_number?: string;
+  website_sosmed_link?: string;
+}
 interface NewFieldProps {
-  name: string;
+  name: keyof FormValues;
   type?: string;
-  options?: RegisterOptions<SignInOptions>;
+  options?: RegisterOptions<FormValues>;
   title?: string;
   icon?: IconType;
 }
+interface SelectFieldProps {
+  name: keyof FormValues;
+  icon?: IconType;
+}
 
+// --- Constants ---
+const CLASS_OPTIONS = ["X", "XI", "XII"].flatMap((item) => {
+  const items = [];
+  for (let i = 1; i <= 9; i++) {
+    if (item === "X") {
+      items.push({ value: `${item}-E${i}`, label: `${item}-E${i}` });
+    } else if (item === "XII" && i > 8) {
+      continue;
+    } else {
+      items.push({ value: `${item}-F${i}`, label: `${item}-F${i}` });
+    }
+  }
+  return items;
+});
+
+// --- Components ---
 const NewField: React.FC<NewFieldProps> = ({
   name,
-  type,
+  type = "text",
   options,
   icon,
   title,
@@ -52,24 +81,25 @@ const NewField: React.FC<NewFieldProps> = ({
   const {
     register,
     formState: { errors },
-  } = useFormContext<SignInOptions>();
+  } = useFormContext<FormValues>();
+  const id = String(name);
 
   return (
     <div className="grid gap-2">
-      <Label htmlFor={name} className="flex justify-start">
+      <Label htmlFor={id} className="flex justify-start">
         {icon && <span className="mr-2">{icon({})}</span>}
-        {title || name.charAt(0).toUpperCase() + name.slice(1)}
+        {title || String(name).charAt(0).toUpperCase() + String(name).slice(1)}
       </Label>
       <Input
         type={type}
-        id={name}
-        {...register(name, options)}
+        id={id}
+        {...register(String(name), options)}
         className={cn(
           "border dark:border-slate-700 focus-visible:ring-2 focus-visible:ring-blue-500 focus:outline-none",
           errors[name] ? "ring-red-500" : ""
         )}
       />
-      {errors[name] && errors[name].message && (
+      {errors[name] && errors[name]?.message && (
         <span className="text-red-500 text-xs">
           {typeof errors[name].message === "string"
             ? errors[name].message
@@ -80,55 +110,34 @@ const NewField: React.FC<NewFieldProps> = ({
   );
 };
 
-interface SelectFieldProps {
-  name: string;
-  icon?: IconType;
-}
 const SelectField: React.FC<SelectFieldProps> = ({ name, icon }) => {
   const {
     formState: { errors },
     setValue,
-  } = useFormContext<SignInOptions>();
+  } = useFormContext<FormValues>();
+  const id = String(name);
 
   return (
     <div className="grid gap-2">
-      <Label htmlFor={name} className="flex justify-start">
+      <Label htmlFor={id} className="flex justify-start">
         {icon && <span className="mr-2">{icon({})}</span>}
-        {name.charAt(0).toUpperCase() + name.slice(1)}
+        {String(name).charAt(0).toUpperCase() + String(name).slice(1)}
       </Label>
-      <Select onValueChange={(value) => setValue(name, value)}>
+      <Select onValueChange={(value) => setValue(String(name), value)}>
         <SelectTrigger
           className={cn("w-full", errors[name] ? "ring-red-500" : "")}
         >
-          <SelectValue placeholder={`Select ${name}`} />
+          <SelectValue placeholder={`Select ${String(name)}`} />
         </SelectTrigger>
         <SelectContent>
-          {["X", "XI", "XII"].flatMap((item) => {
-            const items = [];
-            for (let i = 1; i <= 9; i++) {
-              if (item === "X") {
-                items.push(
-                  <SelectItem
-                    key={`${item}-E${i}`}
-                    value={`${item}-E${i}`}
-                  >{`${item}-E${i}`}</SelectItem>
-                );
-              } else if (item === "XII" && i > 8) {
-                continue;
-              } else {
-                items.push(
-                  <SelectItem
-                    key={`${item}-F${i}`}
-                    value={`${item}-F${i}`}
-                  >{`${item}-F${i}`}</SelectItem>
-                );
-              }
-            }
-            return items;
-          })}
+          {CLASS_OPTIONS.map((item) => (
+            <SelectItem key={item.value} value={item.value}>
+              {item.label}
+            </SelectItem>
+          ))}
         </SelectContent>
       </Select>
-      {errors[name] && (
+      {errors[name] && errors[name]?.message && (
         <span className="text-red-500 text-xs">
           {typeof errors[name].message === "string"
             ? errors[name].message
@@ -139,15 +148,16 @@ const SelectField: React.FC<SelectFieldProps> = ({ name, icon }) => {
   );
 };
 
+// --- Main Component ---
 export default function Register() {
   const { data: session } = useSession();
   const [error, setError] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isOptionalOpen, setIsOptionalOpen] = useState(false);
-  const methods = useForm<SignInOptions>();
+  const methods = useForm<FormValues>();
   const router = useRouter();
 
-  const onSubmit = async (data: SignInOptions | undefined) => {
+  const onSubmit = async (data: FormValues) => {
     try {
       setIsLoading(true);
       const response = await fetch("/api/auth/register", {
@@ -160,19 +170,24 @@ export default function Register() {
         setError(result.error);
         toast.error(result.error);
       } else {
-        signIn(
-          "credentials",
-          {
-            ...data,
-          },
-          {
-            callbackUrl: "/",
-          }
-        );
+        const {
+          name,
+          bio,
+          kelas,
+          phone_number,
+          website_sosmed_link,
+          ...authData
+        } = data;
+        signIn("credentials", {
+          ...authData,
+          callbackUrl: "/",
+        });
         toast.success("Signed up successfully");
       }
     } catch (error: any) {
       setError(error);
+      console.error("Registration Error:", error);
+      toast.error("Registration failed");
     } finally {
       setIsLoading(false);
     }
@@ -275,7 +290,7 @@ export default function Register() {
                         icon={() => <FaGraduationCap />}
                       />
                       <NewField
-                        name="phone_ number"
+                        name="phone_number"
                         title="Phone Number"
                         icon={() => <FaPhone />}
                       />

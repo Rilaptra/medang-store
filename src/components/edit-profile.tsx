@@ -4,33 +4,71 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Phone, Link, User, Book, Users, Info, Loader2 } from "lucide-react";
+import { Phone, Link, User, Book, Users, Info } from "lucide-react";
 import { toast } from "sonner";
 import { Separator } from "@/components/ui/separator";
 import { IUser } from "@/lib/db/models/user.model";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { cn } from "@/lib/utils";
 
 interface EditProfileProps {
   user: IUser;
   setUser: React.Dispatch<SetStateAction<IUser | null>>;
 }
 
+interface FormValues extends Partial<IUser> {
+  kelas: string;
+  nomor_kelas: string;
+}
+
+// --- Constants ---
+const CLASS_OPTIONS = ["X", "XI", "XII"].flatMap((item) => {
+  const items = [];
+  for (let i = 1; i <= 9; i++) {
+    if (item === "X") {
+      items.push({ value: `${item}-E${i}`, label: `${item}-E${i}` });
+    } else if (item === "XII" && i > 8) {
+      continue;
+    } else {
+      items.push({ value: `${item}-F${i}`, label: `${item}-F${i}` });
+    }
+  }
+  return items;
+});
 const EditProfilePage: React.FC<EditProfileProps> = ({ user, setUser }) => {
   const [isEditing, setIsEditing] = useState(false);
-  const [editFormData, setEditFormData] = useState<Partial<IUser>>({});
+  const [editFormData, setEditFormData] = useState<FormValues>({
+    kelas: "",
+    nomor_kelas: "",
+  });
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleEditChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     setEditFormData({ ...editFormData, [e.target.name]: e.target.value });
   };
-
+  const handleSelectChange = (value: string) => {
+    setEditFormData({
+      ...editFormData,
+      kelas: value,
+      nomor_kelas: value.match(/(\d)/)?.[1] || "",
+    });
+  };
   const handleToggleEdit = () => {
     setIsEditing((prev) => !prev);
     if (!isEditing) {
-      setEditFormData({ ...user });
+      setEditFormData({
+        ...user,
+        kelas: user.kelas || "",
+        nomor_kelas: user.nomor_kelas || "",
+      });
     }
   };
 
@@ -50,10 +88,13 @@ const EditProfilePage: React.FC<EditProfileProps> = ({ user, setUser }) => {
           errorData.message || `Failed to update user: ${response.status}`
         );
       }
-      const updatedUser = await response.json();
+      const updatedUser = (await response.json()) as {
+        data: IUser;
+        message: string;
+      };
       setUser(updatedUser.data);
       setIsEditing(false);
-      toast.success("Profile updated successfully!");
+      toast.success(updatedUser.message);
     } catch (error: any) {
       toast.error(`Failed to update profile: ${error.message}`);
     } finally {
@@ -172,37 +213,31 @@ const EditProfilePage: React.FC<EditProfileProps> = ({ user, setUser }) => {
                   Kelas
                 </Label>
               </div>
-
-              <Input
-                type="text"
-                id="kelas"
-                name="kelas"
-                value={editFormData?.kelas || ""}
-                onChange={handleEditChange}
-                disabled={!isEditing}
-                className="dark:bg-gray-800 dark:text-white"
-              />
-            </div>
-            <div className="space-y-4">
-              <div className="flex items-center gap-2">
-                <Book className="h-4 w-4 text-gray-800" />
-                <Label
-                  htmlFor="nomor_kelas"
-                  className="font-medium text-gray-700 dark:text-gray-300"
+              <Select onValueChange={handleSelectChange} disabled={!isEditing}>
+                <SelectTrigger
+                  className={cn(
+                    "w-full dark:bg-gray-800 dark:text-white",
+                    !isEditing && "cursor-not-allowed"
+                  )}
                 >
-                  Nomor Kelas
-                </Label>
-              </div>
-
-              <Input
-                type="text"
-                id="nomor_kelas"
-                name="nomor_kelas"
-                value={editFormData?.nomor_kelas || ""}
-                onChange={handleEditChange}
-                disabled={!isEditing}
-                className="dark:bg-gray-800 dark:text-white"
-              />
+                  <SelectValue
+                    placeholder={
+                      `${editFormData.kelas}${editFormData.nomor_kelas}` ||
+                      "Pilih Kelas"
+                    }
+                    defaultValue={
+                      `${editFormData.kelas}${editFormData.nomor_kelas}` || ""
+                    }
+                  />
+                </SelectTrigger>
+                <SelectContent>
+                  {CLASS_OPTIONS.map((item) => (
+                    <SelectItem key={item.value} value={item.value}>
+                      {item.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             <div className="space-y-4">
               <div className="flex items-center gap-2">
@@ -287,10 +322,7 @@ const EditProfilePage: React.FC<EditProfileProps> = ({ user, setUser }) => {
             </Button>
           </>
         ) : (
-          <Button
-            onClick={handleToggleEdit}
-            className="bg-primary text-gray-800 hover:bg-primary/90 dark:bg-primary dark:hover:bg-primary/90"
-          >
+          <Button onClick={handleToggleEdit} variant="default">
             Edit Profile
           </Button>
         )}

@@ -1,3 +1,4 @@
+// components/add-product-dialog.tsx
 import React, { useState } from "react";
 import {
   Dialog,
@@ -21,10 +22,24 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { IUser } from "@/lib/db/models/user.model";
-import { IProduct, IVariation } from "@/lib/db/models/product.model";
+import { IVariation } from "@/lib/db/models/product.model";
 import { FaPlus, FaMinus, FaImage, FaPlusCircle } from "react-icons/fa";
 import { IoIosClose } from "react-icons/io";
 import { Loader2 } from "lucide-react";
+
+export interface IProduct {
+  seller_id: string;
+  title: string;
+  description: string;
+  category: string;
+  variations: IVariation[];
+  purchased_by: string[];
+  isActive: boolean;
+  isPreOrder: boolean;
+  created_at: Date;
+  updated_at: Date;
+  _id?: string;
+}
 
 interface AddProductDialogProps {
   seller: IUser;
@@ -43,13 +58,13 @@ export const AddProductDialog: React.FC<AddProductDialogProps> = ({
       seller_id: seller._id,
       title: "",
       description: "",
-      discount: 0,
-      discount_value: 0,
-      discount_type: "percent",
       category: "",
       variations: [] as IVariation[],
       isActive: true,
       isPreOrder: false,
+      purchased_by: [],
+      created_at: new Date(),
+      updated_at: new Date(),
     } as IProduct,
   });
 
@@ -64,7 +79,10 @@ export const AddProductDialog: React.FC<AddProductDialogProps> = ({
       price: 0,
       stock: 0,
       images: [],
-    });
+      discount: 0,
+      discount_value: 0,
+      discount_type: "percent",
+    } as IVariation);
   };
 
   const onSubmit = async (values: IProduct) => {
@@ -279,12 +297,75 @@ export const AddProductDialog: React.FC<AddProductDialogProps> = ({
                     />
                     <FormField
                       control={form.control}
+                      name={`variations.${index}.discount`}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Discount</FormLabel>
+                          <FormControl>
+                            <Input
+                              type="number"
+                              placeholder="Discount percentage"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name={`variations.${index}.discount_value`}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Discount Value</FormLabel>
+                          <FormControl>
+                            <Input
+                              type="number"
+                              placeholder="Discount value"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name={`variations.${index}.discount_type`}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Discount Type</FormLabel>
+                          <FormControl>
+                            <select
+                              {...field}
+                              className="border rounded-md py-2 px-3 w-full focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-transparent dark:border-zinc-800 dark:text-white dark:focus:ring-primary-600"
+                            >
+                              <option
+                                value="percent"
+                                className="dark:bg-zinc-950 dark:text-white"
+                              >
+                                Percent
+                              </option>
+                              <option
+                                value="value"
+                                className="dark:bg-zinc-950 dark:text-white"
+                              >
+                                Value
+                              </option>
+                            </select>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
                       name={`variations.${index}.images`}
                       render={() => (
                         <FormItem>
                           <FormLabel>Images</FormLabel>
                           <FormControl>
-                            <div className="flex items-center space-x-2 flex-wrap">
+                            <div className="flex items-center space-x-2 overflow-x-auto">
                               <label htmlFor={`image-upload-${index}`}>
                                 <Button
                                   type="button"
@@ -314,7 +395,7 @@ export const AddProductDialog: React.FC<AddProductDialogProps> = ({
                                   .map((image, imageIndex) => (
                                     <div
                                       key={imageIndex}
-                                      className="relative h-32 rounded-md border overflow-hidden mr-2 mb-2"
+                                      className="relative h-32 rounded-md border overflow-hidden mr-2 mb-2 shrink-0"
                                     >
                                       <img
                                         src={image}

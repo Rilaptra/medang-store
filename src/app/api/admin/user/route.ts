@@ -33,21 +33,27 @@ export async function PATCH(req: NextRequest) {
       );
     }
 
-    const updateData: { role?: string; verified?: boolean } = {};
+    const updateData: {
+      role?: "member" | "admin" | "seller";
+      verified?: boolean;
+    } = {};
     if (role) {
       updateData.role = role;
+      if (role === "member") {
+        updateData.verified = false;
+      } else if (role === "seller") {
+        updateData.verified = true;
+      }
     }
-    if (verified) {
+    if (typeof verified === "boolean") {
       updateData.verified = verified;
-      // updateData.role =
-      //   verified && role === "member"
-      //     ? "seller"
-      //     : !verified && role === "seller"
-      //     ? "member"
-      //     : updateData.role;
-      console.log(updateData.role);
+      updateData.role =
+        verified && role === "member"
+          ? "seller"
+          : !verified && role === "seller"
+          ? "member"
+          : updateData.role;
     }
-    console.log(updateData);
 
     const updatedUser = await User.findByIdAndUpdate(userId, updateData, {
       new: true,

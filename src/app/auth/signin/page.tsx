@@ -23,18 +23,11 @@ export default function Login() {
   const onSubmit = async (data: SignInOptions | undefined) => {
     try {
       setIsLoading(true);
-      const signInResult = await signIn("credentials", {
+      await signIn("credentials", {
         ...data,
-        redirect: false, // Prevents automatic redirect after sign in
+        callbackUrl: "/",
       });
-
-      if (signInResult?.error) {
-        setError(signInResult.error);
-        toast.error("Sign in failed");
-      } else {
-        toast.success("Signed in successfully");
-        router.push("/");
-      }
+      toast.success("Signed in successfully");
     } catch (error: any) {
       setError(error);
       toast.error("Sign in failed");
@@ -42,12 +35,6 @@ export default function Login() {
       setIsLoading(false);
     }
   };
-  // If session is loaded successfully, redirect home
-  useEffect(() => {
-    if (status === "authenticated") {
-      router.push("/");
-    }
-  }, [status, router]);
 
   if (status === "loading") {
     return (

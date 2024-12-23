@@ -136,7 +136,7 @@ export default function AdminDashboard() {
   };
 
   return (
-    <div className="p-4">
+    <div className="p-4 container mx-auto">
       <div className="flex space-x-4 mb-4">
         <Button
           variant={route === "user" ? "default" : "outline"}
@@ -167,7 +167,7 @@ export default function AdminDashboard() {
           {loading ? (
             <p>Loading...</p>
           ) : data.length > 0 ? (
-            <div className="gap-2 justify-start flex-col md:flex-row flex-wrap flex">
+            <div className="gap-2 justify-start justify-items-center flex-col md:flex-row flex-wrap flex">
               {data.map((item, i) =>
                 "email" in item ? (
                   <UserCard
