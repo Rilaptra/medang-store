@@ -20,6 +20,7 @@ import { useSession } from "next-auth/react";
 import { BsInfoCircle } from "react-icons/bs";
 import { useRouter } from "next/navigation";
 import { calculatePriceAndDiscount } from "@/app/utils/utils";
+import Link from "next/link";
 
 interface ProductOptionsProps {
   product: IProduct;
@@ -42,11 +43,11 @@ export const ProductOptions: React.FC<ProductOptionsProps> = ({
     )
   )
     return null;
-
   return (
-    <>
+    <div>
       <div className="absolute top-1 right-1 flex gap-1">
         <Button
+          variant="ghost"
           onClick={() => setIsEditModalOpen(true)}
           className="bg-white dark:bg-black rounded-full aspect-square p-0 hover:bg-gray-900"
         >
@@ -72,7 +73,7 @@ export const ProductOptions: React.FC<ProductOptionsProps> = ({
         product={product}
         onProductDeleted={onProductChange}
       />
-    </>
+    </div>
   );
 };
 
@@ -90,7 +91,6 @@ const ProductCard: React.FC<ProductCardProps> = ({
   onProductChange,
 }) => {
   const { theme } = useTheme();
-  const router = useRouter();
 
   const handleAddToCart = () => {
     toast.success(`Added ${product.title} to cart!`);
@@ -136,59 +136,63 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
   return (
     <Card className="w-fit min-w-80 dark:hover:bg-gray-900 relative hover:bg-gray-200 rounded-lg">
-      {renderImage()}
       <ProductOptions
         product={product}
         user={user}
         onProductChange={onProductChange}
       />
-      <CardContent className="space-y-2 py-4">
-        <div className="flex justify-between items-center">
-          <div>
-            {isLoading ? (
-              <Skeleton className="h-4 w-3/4 rounded-md" />
-            ) : (
-              <h2 className="text-lg font-semibold truncate">
-                {product.title}
-              </h2>
-            )}
-            {isLoading ? (
-              <Skeleton className="h-4 w-1/2 rounded-md" />
-            ) : (
-              <p
-                className={`text-sm  truncate ${
-                  theme === "dark" ? "text-gray-400" : "text-gray-500"
-                }`}
-              >
-                {product.description}
-              </p>
-            )}
-          </div>
-          {isLoading ? (
-            <Skeleton className="h-4 w-1/4 rounded-md" />
-          ) : (
-            <>{discount && <Badge variant="destructive">{discount}</Badge>}</>
-          )}
-        </div>
-
-        <Separator />
-        {isLoading ? (
-          <div className="flex items-center justify-between">
-            <Skeleton className="h-4 w-1/3 rounded-md" />
-            <Skeleton className="h-8 w-1/4 rounded-md" />
-          </div>
-        ) : (
-          <div className="flex items-center gap-5 justify-between">
+      <Link href={`/${user.username}/${encodeURI(product.title)}`}>
+        {renderImage()}
+        <CardContent className="space-y-2 py-4">
+          <div className="flex justify-between items-center">
             <div>
-              <h3 className="text-xl font-semibold">
-                {formatPrice(minPriceAfterDiscount)} -{" "}
-                {formatPrice(maxPriceAfterDiscount)}
-              </h3>
+              {isLoading ? (
+                <Skeleton className="h-4 w-3/4 rounded-md" />
+              ) : (
+                <h2 className="text-lg font-semibold truncate">
+                  {product.title}
+                </h2>
+              )}
+              {isLoading ? (
+                <Skeleton className="h-4 w-1/2 rounded-md" />
+              ) : (
+                <p
+                  className={`text-sm  truncate ${
+                    theme === "dark" ? "text-gray-400" : "text-gray-500"
+                  }`}
+                >
+                  {product.description.length > 25
+                    ? product.description.slice(0, 25) + "..."
+                    : product.description}
+                </p>
+              )}
             </div>
+            {isLoading ? (
+              <Skeleton className="h-4 w-1/4 rounded-md" />
+            ) : (
+              <>{discount && <Badge variant="destructive">{discount}</Badge>}</>
+            )}
           </div>
-        )}
-      </CardContent>
-      <CardFooter className="pt-0">
+
+          <Separator />
+          {isLoading ? (
+            <div className="flex items-center justify-between">
+              <Skeleton className="h-4 w-1/3 rounded-md" />
+              <Skeleton className="h-8 w-1/4 rounded-md" />
+            </div>
+          ) : (
+            <div className="flex items-center gap-5 justify-between">
+              <div>
+                <h3 className="text-lg font-semibold">
+                  {formatPrice(minPriceAfterDiscount)}{" "}
+                  {product.variations.length > 1 &&
+                    `- ${formatPrice(maxPriceAfterDiscount)}`}
+                </h3>
+              </div>
+            </div>
+          )}
+        </CardContent>
+        {/* <CardFooter className="pt-0">
         {isLoading ? (
           <Skeleton className="h-10 w-full rounded-md" />
         ) : (
@@ -205,7 +209,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
             </Button>
           </div>
         )}
-      </CardFooter>
+      </CardFooter> */}
+      </Link>
     </Card>
   );
 };

@@ -62,7 +62,8 @@
     "tailwind-merge": "^2.5.5",
     "tailwindcss-animate": "^1.0.7",
     "uuid": "^11.0.3",
-    "vaul": "^1.1.2"
+    "vaul": "^1.1.2",
+    "zustand": "^5.0.2"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",

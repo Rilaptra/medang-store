@@ -1,6 +1,8 @@
+// src/lib/models/voucher.model.ts
+
 import mongoose, { Schema, Document, Model } from "mongoose";
 
-export interface IVoucher extends Document {
+export interface IVoucher {
   title: string;
   expired_at: Date;
   owner_id?: mongoose.Types.ObjectId;
@@ -11,7 +13,18 @@ export interface IVoucher extends Document {
   updated_at: Date;
 }
 
-const VoucherSchema = new Schema<IVoucher>({
+export interface IVoucherDoc extends Document {
+  title: string;
+  expired_at: Date;
+  owner_id?: mongoose.Types.ObjectId;
+  code: string;
+  discount: number;
+  products: mongoose.Types.ObjectId[];
+  created_at: Date;
+  updated_at: Date;
+}
+
+const VoucherSchema = new Schema<IVoucherDoc>({
   title: { type: String, required: true },
   expired_at: { type: Date, required: true },
   owner_id: {
@@ -38,5 +51,6 @@ const VoucherSchema = new Schema<IVoucher>({
   updated_at: { type: Date, default: Date.now },
 });
 
-export const Voucher: Model<IVoucher> =
-  mongoose.models.Voucher || mongoose.model<IVoucher>("Voucher", VoucherSchema);
+export const Voucher: Model<IVoucherDoc> =
+  mongoose.models.Voucher ||
+  mongoose.model<IVoucherDoc>("Voucher", VoucherSchema);

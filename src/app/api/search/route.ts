@@ -20,8 +20,8 @@ export async function GET(req: NextRequest) {
           // Check if query is not empty and not null
           $or: [
             { title: { $regex: query, $options: "i" } },
-            { description: { $regex: query, $options: "i" } },
-            { "variations.variant_title": { $regex: query, $options: "i" } },
+            // { description: { $regex: query, $options: "i" } },
+            // { "variations.variant_title": { $regex: query, $options: "i" } },
           ],
         }),
       ...(category &&
@@ -33,8 +33,11 @@ export async function GET(req: NextRequest) {
     const products = await Product.find(filters)
       .skip(skip)
       .limit(limit)
-      .sort({ created_at: -1 });
-
+      .sort({ created_at: -1 })
+      .populate({
+        path: "seller_id",
+        select: "username",
+      });
     const totalProducts = await Product.countDocuments(filters);
     const totalPages = Math.ceil(totalProducts / limit);
 

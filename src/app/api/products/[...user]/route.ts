@@ -1,35 +1,61 @@
-// src/app/api/products/[...userId]/route.ts
+// src/app/api/products/[...user]/route.ts
 
 import dbConnect from "@/lib/db/connect";
 import { IProduct, Product } from "@/lib/db/models/product.model";
+import { IUser } from "@/lib/db/models/user.model";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: Promise<{ userId: string[] }> }
+  { params }: { params: Promise<{ user: string[] }> }
 ) {
   try {
-    const [userId] = (await params).userId;
-    if (!userId) {
+    await dbConnect();
+    const [user, productTitle] = (await params).user;
+    if (!user) {
       return NextResponse.json(
-        { message: "User ID is required" },
+        { message: "User is required" },
         { status: 400 }
       );
     }
-    const products = await Product.find({ seller_id: userId });
+
+    if (productTitle) {
+      const product = await Product.find({
+        title: new RegExp(`^${productTitle}$`, "i"),
+      }).populate("seller_id");
+
+      if (!product)
+        return NextResponse.json(
+          { message: "Product not found" },
+          { status: 404 }
+        );
+
+      const selectedProduct = product.find(
+        (p) => (p.seller_id as unknown as IUser).username === user
+      );
+      if (!selectedProduct)
+        return NextResponse.json(
+          { message: "Product not found" },
+          { status: 404 }
+        );
+      return NextResponse.json({ data: selectedProduct }, { status: 200 });
+    }
+    const products = await Product.find({ seller_id: user });
     return NextResponse.json({ data: products }, { status: 200 });
   } catch (error: any) {
+    console.log(error);
     return NextResponse.json({ message: error.message }, { status: 500 });
   }
 }
 
 export async function POST(
   req: NextRequest,
-  { params }: { params: { userId: string[] } }
+  { params }: { params: { user: string[] } }
 ) {
   try {
-    const [userId] = params.userId;
-    if (!userId) {
+    await dbConnect();
+    const [user] = params.user;
+    if (!user) {
       return NextResponse.json(
         { message: "User ID is required" },
         { status: 400 }
@@ -52,8 +78,6 @@ export async function POST(
       );
     }
 
-    await dbConnect();
-
     const product = await Product.create(body);
     return NextResponse.json({ data: product }, { status: 201 });
   } catch (error: any) {
@@ -64,10 +88,11 @@ export async function POST(
 
 export async function PUT(
   req: NextRequest,
-  { params }: { params: Promise<{ userId: string[] }> }
+  { params }: { params: Promise<{ user: string[] }> }
 ) {
   try {
-    const [productId] = (await params).userId;
+    await dbConnect();
+    const [productId] = (await params).user;
     if (!productId) {
       return NextResponse.json(
         { message: "Product ID is required" },
@@ -95,10 +120,11 @@ export async function PUT(
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: Promise<{ userId: string[] }> }
+  { params }: { params: Promise<{ user: string[] }> }
 ) {
   try {
-    const [productId] = (await params).userId;
+    await dbConnect();
+    const [productId] = (await params).user;
 
     if (!productId) {
       return NextResponse.json(

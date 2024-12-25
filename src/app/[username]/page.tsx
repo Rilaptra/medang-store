@@ -5,24 +5,14 @@ import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { format } from "date-fns";
 import { toast } from "sonner";
-import {
-  ArrowLeftIcon,
-  CalendarIcon,
-  DollarSign,
-  PhoneIcon,
-  UserIcon,
-  UsersIcon,
-  VerifiedIcon,
-} from "lucide-react";
+import { CalendarIcon, PhoneIcon, UserIcon, VerifiedIcon } from "lucide-react";
 import {
   FaExclamation,
   FaExclamationCircle,
   FaInstagram,
-  FaPlus,
   FaWhatsapp,
 } from "react-icons/fa";
 import { HiOutlineClipboardCopy } from "react-icons/hi";
-import { TfiPackage } from "react-icons/tfi";
 import { IoMdLink } from "react-icons/io";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -40,6 +30,7 @@ import { roleBadgeColors } from "@/components/user-card";
 
 import { IUser } from "@/lib/db/models/user.model";
 import { IProduct } from "@/lib/db/models/product.model";
+import useTheme from "next-theme";
 
 // --- Helper Functions ---
 const userRoleBadge = (user: IUser) => {
@@ -61,8 +52,7 @@ const userRoleBadge = (user: IUser) => {
 
 const UserPage: FC = () => {
   const { username } = useParams();
-  const { data: session } = useSession();
-
+  const { data: session, status } = useSession();
   const [user, setUser] = useState<IUser | null>(null);
   const [products, setProducts] = useState<IProduct[] | null>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -70,6 +60,7 @@ const UserPage: FC = () => {
   const [isErrorOpen, setIsErrorOpen] = useState(false);
   const [isAddProductOpen, setIsAddProductOpen] = useState(false);
   const [isFollowing, setIsFollowing] = useState(false);
+  const { theme } = useTheme();
 
   // --- Fetching Data ---
   const fetchUser = async () => {
@@ -135,6 +126,10 @@ const UserPage: FC = () => {
     }
   }, [user]);
 
+  useEffect(() => {
+    if (status === "loading") setIsLoading(true);
+  }, [status]);
+
   // --- Error Handling ---
   const handleFetchError = (message: string) => {
     setError(message);
@@ -147,6 +142,17 @@ const UserPage: FC = () => {
   const handleFollow = async () => {
     if (!user) return;
     try {
+      setIsFollowing(!isFollowing);
+      if (isFollowing)
+        setUser({
+          ...user,
+          followers: user.followers.filter((id) => id !== session?.user?.id!),
+        });
+      else
+        setUser({
+          ...user,
+          followers: [...user.followers!, session?.user?.id!],
+        });
       const response = await fetch(`/api/users/${user.username}/follow`, {
         method: "POST",
       });
@@ -158,9 +164,12 @@ const UserPage: FC = () => {
         data: IUser;
         followed: boolean;
       };
-      setUser(updatedUser.data);
-      setIsFollowing(updatedUser.followed);
     } catch (err: any) {
+      setUser({
+        ...user,
+        followers: user.followers.filter((id) => id !== session?.user?.id),
+      });
+      setIsFollowing(!isFollowing);
       handleFetchError(err.message);
     }
   };
@@ -350,11 +359,19 @@ const UserPage: FC = () => {
             <div className="flex items-center gap-4 mb-4">
               {session?.user.id !== user._id && (
                 <Button
-                  variant={isFollowing ? "outline" : "default"}
+                  variant={
+                    isFollowing
+                      ? "outline"
+                      : theme === "dark"
+                      ? "outline"
+                      : "default"
+                  }
                   size="sm"
                   className={`px-10 ${
                     isFollowing
                       ? "border-red-500 text-red-500 hover:text-red-500 hover:bg-red-500/5"
+                      : theme === "dark"
+                      ? "border-zinc-500 text-zinc-200 hover:text-zinc-200 hover:bg-zinc-500/5"
                       : ""
                   }`}
                   onClick={handleFollow}

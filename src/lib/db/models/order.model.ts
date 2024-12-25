@@ -1,6 +1,24 @@
-import mongoose, { Schema, Document, Model } from "mongoose";
+// src/lib/db/models/order.model.ts
 
-export interface IOrder extends Document {
+import mongoose, { Schema, Document, Model } from "mongoose";
+import { IVoucher } from "./voucher.model";
+import { IOrderItem } from "./order-item.model";
+import { IUser } from "./user.model";
+
+export interface IOrder {
+  buyer_id: IUser;
+  seller_id: IUser;
+  items: IOrderItem[];
+  total_amount: number;
+  order_date: Date;
+  payment_status: "pending" | "success" | "failed";
+  shipping_status: "pending" | "shipped" | "delivered";
+  voucher_id?: IVoucher;
+  created_at: Date;
+  updated_at: Date;
+}
+
+export interface IOrderDoc extends Document {
   buyer_id: mongoose.Types.ObjectId;
   seller_id: mongoose.Types.ObjectId;
   items: mongoose.Types.ObjectId[];
@@ -13,7 +31,7 @@ export interface IOrder extends Document {
   updated_at: Date;
 }
 
-const OrderSchema = new Schema<IOrder>({
+const OrderSchema = new Schema<IOrderDoc>({
   buyer_id: {
     type: Schema.Types.ObjectId,
     ref: "User",
@@ -50,5 +68,5 @@ const OrderSchema = new Schema<IOrder>({
   updated_at: { type: Date, default: Date.now },
 });
 
-export const Order: Model<IOrder> =
-  mongoose.models.Order || mongoose.model<IOrder>("Order", OrderSchema);
+export const Order: Model<IOrderDoc> =
+  mongoose.models.Order || mongoose.model<IOrderDoc>("Order", OrderSchema);

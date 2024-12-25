@@ -1,34 +1,31 @@
 import React, { useState, useEffect } from "react";
-import ProductCard from "./seller-product-card";
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import useTheme from "next-theme";
 import { calculatePriceAndDiscount } from "@/app/utils/utils";
 import { Separator } from "@/components/ui/separator";
 import { formatPrice } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { BsInfoCircle } from "react-icons/bs";
 import Image from "next/image";
-
-interface Product {
-  _id: string;
-  title: string;
-  // Add other properties based on the API response if you plan to display them
-}
+import { IProduct } from "@/lib/db/models/product.model";
+import { Badge } from "./ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
+import Link from "next/link";
 
 interface SearchPageProps {
-  query?: string | null; // Allow query to be a string or null
-  category?: string | null; // Allow category to be a string or null
+  query?: string | null;
+  category?: string | null;
 }
 
 const SearchPage: React.FC<SearchPageProps> = ({ query, category }) => {
-  const [products, setProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<IProduct[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalProducts, setTotalProducts] = useState(0);
   const { theme } = useTheme();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -37,11 +34,9 @@ const SearchPage: React.FC<SearchPageProps> = ({ query, category }) => {
 
       try {
         let url = `/api/search?page=${page}`;
-        // Handle null query
         if (query !== null && query !== undefined) {
           url += `&query=${query}`;
         }
-        // Handle null category
         if (category !== null && category !== undefined) {
           url += `&category=${category}`;
         }
@@ -50,10 +45,17 @@ const SearchPage: React.FC<SearchPageProps> = ({ query, category }) => {
         if (!response.ok) {
           const message = `Failed to fetch products: ${response.status}`;
           setError(message);
-          console.log(message);
+          console.error(message); // Use console.error for errors
           throw new Error(message);
         }
-        const data = await response.json();
+        const data = (await response.json()) as {
+          data: IProduct[];
+          totalPages: number;
+          totalProducts: number;
+          currentPage: number;
+        };
+
+        console.log("list:", data.data);
 
         setProducts(data.data);
         setTotalPages(data.totalPages);
@@ -72,75 +74,103 @@ const SearchPage: React.FC<SearchPageProps> = ({ query, category }) => {
     setPage(newPage);
   };
 
+  // Skeleton Loading Component
+  const LoadingSkeleton = () => {
+    return (
+      <div className="flex flex-wrap gap-4 justify-center">
+        {[...Array(6)].map((_, i) => (
+          <Card key={i} className="w-fit min-w-80 rounded-lg dark:bg-zinc-800">
+            <div className="relative">
+              <AspectRatio ratio={16 / 9}>
+                <Skeleton className="h-full w-full rounded-md bg-zinc-300 dark:bg-zinc-700" />
+              </AspectRatio>
+            </div>
+            <CardContent className="space-y-2 py-4">
+              <div className="flex justify-between items-start">
+                <Skeleton className="h-4 w-3/5 bg-zinc-300 dark:bg-zinc-700" />
+              </div>
+              <Skeleton className="h-7 w-4/5 bg-zinc-300 dark:bg-zinc-700" />
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    );
+  };
+
   if (loading) {
-    return <div className="container mx-auto p-6">Loading products...</div>;
+    return (
+      <div className="container mx-auto p-6">
+        <LoadingSkeleton />
+      </div>
+    );
   }
 
   if (error) {
-    return <div className="container mx-auto p-6">Error: {error}</div>;
+    return (
+      <div className="container mx-auto p-6 text-red-500">Error: {error}</div>
+    );
   }
+
+  const renderProducts = () => (
+    <div className="flex flex-wrap gap-4 justify-center">
+      {products.map((item, i) => {
+        const { minPriceAfterDiscount, maxPriceAfterDiscount, discount } =
+          calculatePriceAndDiscount(item);
+        return (
+          <Link key={i} href={`/${item.seller_id.username}/${item.title}`}>
+            <Card className="w-fit min-w-80 dark:hover:bg-gray-900 relative hover:bg-gray-200 rounded-lg">
+              <div className="relative">
+                <AspectRatio ratio={16 / 9}>
+                  <Image
+                    src={item.variations[0].images[0] || "/placeholder.png"}
+                    alt={item.title}
+                    className="rounded-md object-cover"
+                    fill
+                    sizes="100%"
+                    priority
+                  />
+                </AspectRatio>
+                {discount && (
+                  <Badge
+                    variant="destructive"
+                    className="absolute top-2 right-2"
+                  >
+                    {discount}
+                  </Badge>
+                )}
+              </div>
+              <CardContent className="space-y-2 py-4">
+                <h2 className="text-lg font-semibold line-clamp-2">
+                  {item.title}
+                </h2>
+                <div className="flex items-center gap-5 justify-between">
+                  <div>
+                    <h3 className="text-xl font-semibold">
+                      {formatPrice(minPriceAfterDiscount)}{" "}
+                      {item.variations.length > 1 &&
+                        `- ${formatPrice(maxPriceAfterDiscount)}`}
+                    </h3>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
+        );
+      })}
+    </div>
+  );
 
   return (
     <div className="container mx-auto p-6">
       {products.length === 0 ? (
         <div> No products found </div>
       ) : (
-        <div style={{ display: "flex", flexWrap: "wrap" }}>
-          {products.map((item, i) => {
-            const { minPriceAfterDiscount, maxPriceAfterDiscount, discount } =
-              calculatePriceAndDiscount(item);
-            return (
-              <Card
-                key={i}
-                className="w-fit min-w-80 dark:hover:bg-gray-900 relative hover:bg-gray-200 rounded-lg"
-              >
-                <div className="relative">
-                  <AspectRatio ratio={16 / 9}>
-                    <Image
-                      src={item.variations[0].images[0] || "/placeholder.png"}
-                      alt={item.title}
-                      className="rounded-md object-cover"
-                      fill
-                      sizes="100%"
-                      priority
-                    />
-                  </AspectRatio>
-                </div>
-                <CardContent className="space-y-2 py-4">
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <h2 className="text-lg font-semibold line-clamp-2">
-                        {item.title}
-                      </h2>
-                    </div>
-                    <>
-                      {item.discount && (
-                        <Badge variant="destructive">{item.discount}</Badge>
-                      )}
-                    </>
-                  </div>
-
-                  <Separator />
-                  <div className="flex items-center gap-5 justify-between">
-                    <div>
-                      <h3 className="text-xl font-semibold">
-                        {formatPrice(minPriceAfterDiscount)} -{" "}
-                        {formatPrice(maxPriceAfterDiscount)}
-                      </h3>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            );
-          })}
-        </div>
+        renderProducts()
       )}
 
-      <div className="flex gap-2 mx-auto mt-6 justify-center">
+      <div className="flex gap-2 mx-auto mt-6 justify-center items-center">
         <Button
           variant="ghost"
-          size="icon"
-          className="md:hidden"
           onClick={() => handlePageChange(page - 1)}
           disabled={page <= 1}
         >
@@ -148,14 +178,11 @@ const SearchPage: React.FC<SearchPageProps> = ({ query, category }) => {
         </Button>
 
         <span>
-          {" "}
-          {page} of {totalPages}{" "}
+          {page} of {totalPages}
         </span>
 
         <Button
           variant="ghost"
-          size="icon"
-          className="md:hidden"
           onClick={() => handlePageChange(page + 1)}
           disabled={page >= totalPages}
         >

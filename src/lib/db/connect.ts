@@ -1,5 +1,6 @@
 "use server";
 import mongoose, { Mongoose } from "mongoose";
+import { initModels } from "./init";
 
 const MONGODB_URI = process.env.MONGODB_URI;
 
@@ -21,6 +22,8 @@ async function dbConnect(): Promise<Mongoose> {
   }
 
   if (!cached.promise) {
+    await initModels();
+    console.log("✓ Compiled models");
     const opts = {
       bufferCommands: false,
       dbName: "medang-store",

@@ -4,7 +4,6 @@ import DisplayProductCard from "@/components/display-product-card";
 import BigProductCard from "@/components/big-product-card";
 import { IProduct } from "@/lib/db/models/product.model";
 import { useSearchParams } from "next/navigation";
-import { useSession } from "next-auth/react";
 import {
   Dialog,
   DialogContent,
@@ -13,18 +12,18 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+import { IUser } from "@/lib/db/models/user.model";
 
 const ProductsPage = () => {
   const searchParams = useSearchParams();
   const productId = searchParams.get("id");
   const [products, setProducts] = useState<IProduct[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<IProduct | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const [user, setUser] = useState<IUser | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const { data: session } = useSession();
   const [isErrorDialogOpen, setIsErrorDialogOpen] = useState(false);
   const router = useRouter();
-  const user = session?.user;
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -53,6 +52,17 @@ const ProductsPage = () => {
           if (productId) {
             if (data.data) {
               setSelectedProduct(data.data);
+              const res = await fetch(
+                `/api/users/${(data.data as IProduct).seller_id.username}`
+              );
+              if (!res.ok) {
+                const data = await res.json();
+                throw new Error(
+                  data.message || "Failed to fetch user information."
+                );
+              }
+              const user = (await res.json()) as { data: IUser };
+              setUser(user.data);
             }
           } else {
             setProducts(data.data);
@@ -106,8 +116,7 @@ const ProductsPage = () => {
             <div key={product._id} className="max-w-sm w-full">
               <DisplayProductCard
                 product={product}
-                isLoading={isLoading}
-                user={user}
+                user={product.seller_id as IUser}
                 onProductChange={() => {}}
               />
             </div>
@@ -117,7 +126,7 @@ const ProductsPage = () => {
             <BigProductCard
               product={selectedProduct}
               isLoading={isLoading}
-              user={user}
+              user={user!}
               onProductChange={() => {}}
             />
           </div>

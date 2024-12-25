@@ -1,4 +1,7 @@
+// src/lib/models/product.model.ts
+
 import mongoose, { Schema, Document, Model } from "mongoose";
+import { IUser } from "./user.model";
 
 export interface IVariation {
   variant_title: string;
@@ -10,7 +13,7 @@ export interface IVariation {
   discount_type: "percent" | "value";
 }
 export interface IProduct {
-  seller_id: mongoose.Types.ObjectId;
+  seller_id: IUser;
   title: string;
   description: string;
   category: string;

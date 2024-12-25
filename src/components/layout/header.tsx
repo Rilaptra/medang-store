@@ -37,10 +37,6 @@ export default function Header() {
     setMounted(true);
   }, []);
 
-  useEffect(() => {
-    console.log(session?.user);
-  }, []);
-
   if (!mounted) {
     return null;
   }
@@ -53,7 +49,7 @@ export default function Header() {
             <Button variant="link" size="icon">
               <House className="h-5 w-5" />{" "}
             </Button>
-            <span className="hidden sm:inline-block whitespace-nowrap">
+            <span className="hidden sm:inline-block whitespace-nowrap sm:pr-2">
               Medang Market
             </span>
           </Link>
@@ -100,10 +96,13 @@ export default function Header() {
                   <DropdownMenuContent align="end">
                     <DropdownMenuItem>
                       <Link
-                        className="w-full h-full"
+                        className="w-full h-full flex flex-col"
                         href={`/${session.user.username}`}
                       >
-                        Profile
+                        <span>Profile</span>
+                        <span className="opacity-75 text-xs">
+                          @{session.user.username}
+                        </span>
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem>

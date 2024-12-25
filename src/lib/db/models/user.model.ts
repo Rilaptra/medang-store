@@ -1,4 +1,7 @@
+// src/lib/db/models/user.models.ts
+
 import mongoose, { Schema, Document, Model } from "mongoose";
+
 export interface IUser {
   username: string;
   hash: string;
@@ -12,9 +15,9 @@ export interface IUser {
   bio?: string;
   website_sosmed_link?: string;
   verified: boolean;
-  followers: mongoose.Types.ObjectId[];
+  followers: string[];
   created_at: Date;
-  _id?: string;
+  _id: string;
 }
 export interface IUserDoc extends Document {
   username: string;
