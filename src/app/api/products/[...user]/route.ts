@@ -50,11 +50,11 @@ export async function GET(
 
 export async function POST(
   req: NextRequest,
-  { params }: { params: { user: string[] } }
+  { params }: { params: Promise<{ user: string[] }> }
 ) {
   try {
     await dbConnect();
-    const [user] = params.user;
+    const [user] = (await params).user;
     if (!user) {
       return NextResponse.json(
         { message: "User ID is required" },

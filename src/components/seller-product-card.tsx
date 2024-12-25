@@ -19,8 +19,8 @@ import { DeleteProductDialog } from "./delete-product-dialog";
 import { useSession } from "next-auth/react";
 import { BsInfoCircle } from "react-icons/bs";
 import { useRouter } from "next/navigation";
-import { calculatePriceAndDiscount } from "@/app/utils/utils";
 import Link from "next/link";
+import { calculatePriceAndDiscount } from "./search-page";
 
 interface ProductOptionsProps {
   product: IProduct;
@@ -106,8 +106,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
     ? []
     : ["/placeholder.png"];
 
-  const { minPriceAfterDiscount, maxPriceAfterDiscount, discount } =
-    calculatePriceAndDiscount(product);
+  const { minPrice, maxPrice, discount } = calculatePriceAndDiscount(product);
 
   const renderImage = () => {
     if (isLoading) {
@@ -170,7 +169,15 @@ const ProductCard: React.FC<ProductCardProps> = ({
             {isLoading ? (
               <Skeleton className="h-4 w-1/4 rounded-md" />
             ) : (
-              <>{discount && <Badge variant="destructive">{discount}</Badge>}</>
+              <>
+                {
+                  <Badge variant="destructive">
+                    {discount.max
+                      ? `${discount.max}%`
+                      : `${discount.min}% - ${discount.max}%`}
+                  </Badge>
+                }
+              </>
             )}
           </div>
 
@@ -184,9 +191,9 @@ const ProductCard: React.FC<ProductCardProps> = ({
             <div className="flex items-center gap-5 justify-between">
               <div>
                 <h3 className="text-lg font-semibold">
-                  {formatPrice(minPriceAfterDiscount)}{" "}
+                  {formatPrice(minPrice)}{" "}
                   {product.variations.length > 1 &&
-                    `- ${formatPrice(maxPriceAfterDiscount)}`}
+                    `- ${formatPrice(maxPrice)}`}
                 </h3>
               </div>
             </div>

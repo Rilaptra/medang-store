@@ -7,6 +7,7 @@ import Footer from "@/components/layout/footer";
 import AuthProvider from "@/components/auth-provider";
 import { ThemeProvider } from "next-theme";
 import { Toaster } from "sonner";
+import { Suspense } from "react";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -27,7 +28,17 @@ export default function RootLayout({
           <ThemeProvider attribute="class" defaultTheme="system">
             <div className="min-h-screen flex flex-col">
               <Header />
-              <main className="flex-grow">{children}</main>
+              <Suspense
+                fallback={
+                  <div className="flex justify-center items-center h-full">
+                    <span className="animate-pulse text-2xl font-semibold">
+                      Loading...
+                    </span>
+                  </div>
+                }
+              >
+                <main className="flex-grow">{children}</main>
+              </Suspense>
               <Footer />
             </div>
             <Toaster richColors={true} />

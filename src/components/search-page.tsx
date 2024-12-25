@@ -1,9 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
-import useTheme from "next-theme";
-import { calculatePriceAndDiscount } from "@/app/utils/utils";
-import { Separator } from "@/components/ui/separator";
 import { formatPrice } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
@@ -17,15 +14,45 @@ interface SearchPageProps {
   category?: string | null;
 }
 
+export function calculatePriceAndDiscount(product: IProduct) {
+  // product sorted from cheaper to more expensive
+  const variations = product.variations.sort((a, b) => a.price - b.price);
+  const minVariation = variations[0];
+  const maxVariation = variations[variations.length - 1];
+  const minVariationPriceDiscounted =
+    minVariation.discount_type === "percent"
+      ? minVariation.price * (1 - minVariation.discount / 100)
+      : minVariation.price - minVariation.discount_value;
+  const maxVariationPriceDiscounted =
+    maxVariation.discount_type === "percent"
+      ? maxVariation.price * (1 - maxVariation.discount / 100)
+      : maxVariation.price - maxVariation.discount_value;
+
+  return {
+    maxPrice: maxVariationPriceDiscounted,
+    minPrice: minVariationPriceDiscounted,
+    discount: {
+      min: (minVariation.discount_type === "percent"
+        ? minVariation.discount
+        : (minVariationPriceDiscounted / minVariation.price) * 100
+      ).toFixed(1),
+      max:
+        maxVariationPriceDiscounted === minVariationPriceDiscounted
+          ? null
+          : (maxVariation.discount_type === "percent"
+              ? maxVariation.discount
+              : (maxVariationPriceDiscounted / maxVariation.price) * 100
+            ).toFixed(1),
+    },
+  };
+}
+
 const SearchPage: React.FC<SearchPageProps> = ({ query, category }) => {
   const [products, setProducts] = useState<IProduct[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [totalProducts, setTotalProducts] = useState(0);
-  const { theme } = useTheme();
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -59,7 +86,6 @@ const SearchPage: React.FC<SearchPageProps> = ({ query, category }) => {
 
         setProducts(data.data);
         setTotalPages(data.totalPages);
-        setTotalProducts(data.totalProducts);
       } catch (err: any) {
         setError(err.message || "Failed to fetch products");
       } finally {
@@ -115,7 +141,7 @@ const SearchPage: React.FC<SearchPageProps> = ({ query, category }) => {
     <div className="mx-auto">
       <div className="flex flex-wrap gap-4 mx-auto">
         {products.map((item, i) => {
-          const { minPriceAfterDiscount, maxPriceAfterDiscount, discount } =
+          const { minPrice, maxPrice, discount } =
             calculatePriceAndDiscount(item);
           return (
             <Link
@@ -140,7 +166,9 @@ const SearchPage: React.FC<SearchPageProps> = ({ query, category }) => {
                       variant="destructive"
                       className="absolute top-2 right-2"
                     >
-                      {discount}
+                      {discount.max
+                        ? `${discount.min}% - ${discount.max}%`
+                        : `${discount.min}%`}
                     </Badge>
                   )}
                 </div>
@@ -151,9 +179,9 @@ const SearchPage: React.FC<SearchPageProps> = ({ query, category }) => {
                   <div className="flex items-center gap-5 justify-between">
                     <div>
                       <h3 className="text-xl font-semibold">
-                        {formatPrice(minPriceAfterDiscount)}{" "}
+                        {formatPrice(minPrice)}{" "}
                         {item.variations.length > 1 &&
-                          `- ${formatPrice(maxPriceAfterDiscount)}`}
+                          `- ${formatPrice(maxPrice)}`}
                       </h3>
                     </div>
                   </div>
@@ -167,36 +195,44 @@ const SearchPage: React.FC<SearchPageProps> = ({ query, category }) => {
   );
 
   return (
-    <div className="container mx-auto p-6">
-      {products.length === 0 ? (
-        <div> No products found </div>
-      ) : (
-        renderProducts()
-      )}
+    <Suspense fallback={<LoadingSkeleton />}>
+      <div className="container mx-auto p-6">
+        {products.length === 0 ? (
+          <div> No products found </div>
+        ) : (
+          renderProducts()
+        )}
 
-      <div className="flex gap-2 mx-auto mt-6 justify-center items-center">
-        <Button
-          variant="ghost"
-          onClick={() => handlePageChange(page - 1)}
-          disabled={page <= 1}
-        >
-          Previous
-        </Button>
+        <div className="flex gap-2 mx-auto mt-6 justify-center items-center">
+          <Button
+            variant="ghost"
+            onClick={() => handlePageChange(page - 1)}
+            disabled={page <= 1}
+          >
+            Previous
+          </Button>
 
-        <span>
-          {page} of {totalPages}
-        </span>
+          <span>
+            {page} of {totalPages}
+          </span>
 
-        <Button
-          variant="ghost"
-          onClick={() => handlePageChange(page + 1)}
-          disabled={page >= totalPages}
-        >
-          Next
-        </Button>
-      </div>
-    </div>
+          <Button
+            variant="ghost"
+            onClick={() => handlePageChange(page + 1)}
+            disabled={page >= totalPages}
+          >
+            Next
+          </Button>
+        </div>
+      </div>{" "}
+    </Suspense>
   );
 };
+
+// function loading() {
+//   return <div className="container mx-auto p-6">
+//     <LoadingSkeleton />
+//   </div>
+// }
 
 export default SearchPage;

@@ -1,17 +1,42 @@
 "use client";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import SearchPage from "@/components/search-page";
 
 export default function Home() {
-  const params = useSearchParams();
-  const searchQuery = params.get("search");
-  const category = params.get("category");
+  const [isClient, setIsClient] = useState(false);
+  const [searchParams, setSearchParams] = useState<{
+    search: string | null;
+    category: string | null;
+  }>({
+    search: null,
+    category: null,
+  });
 
-  if (searchQuery)
-    return <SearchPage category={category} query={searchQuery} />;
+  const params = useSearchParams();
+
+  useEffect(() => {
+    setIsClient(true);
+    setSearchParams({
+      search: params.get("search"),
+      category: params.get("category"),
+    });
+  }, [params]);
+
+  if (!isClient) {
+    return null;
+  }
+
+  if (searchParams.search) {
+    return (
+      <SearchPage
+        category={searchParams.category}
+        query={searchParams.search}
+      />
+    );
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -36,7 +61,7 @@ export default function Home() {
               Browse Products
             </Button>
           </Link>
-          <Link href="/api/auth/register" className="flex-1">
+          <Link href="/api/aut jh/register" className="flex-1">
             <Button variant="outline" size="lg" className="w-full">
               Start Selling
             </Button>

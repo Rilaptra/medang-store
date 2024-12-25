@@ -14,20 +14,17 @@ import {
 } from "react-icons/fa";
 import { HiOutlineClipboardCopy } from "react-icons/hi";
 import { IoMdLink } from "react-icons/io";
-
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-
 import ErrorDialog from "@/components/error-dialog";
 import ProductCard from "@/components/seller-product-card";
 import { AddProductDialog } from "@/components/add-product-dialog";
 import EditProfilePage from "@/components/edit-profile";
 import { roleBadgeColors } from "@/components/user-card";
-
 import { IUser } from "@/lib/db/models/user.model";
 import { IProduct } from "@/lib/db/models/product.model";
 import useTheme from "next-theme";
@@ -294,7 +291,7 @@ const UserPage: FC = () => {
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center justify-center gap-2">
                     {userRoleBadge(user)}
                     {user.verified && (
                       <Badge
