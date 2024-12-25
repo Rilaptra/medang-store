@@ -118,6 +118,7 @@ export default function Header() {
                       </DropdownMenuItem>
                     )}
                     <DropdownMenuItem
+                      className="cursor-pointer"
                       onClick={() =>
                         signOut({ callbackUrl: window.location.origin })
                       }

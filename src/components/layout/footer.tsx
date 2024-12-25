@@ -8,7 +8,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
             <h3 className="font-semibold text-lg mb-4">About Us</h3>
-            <p className="text-muted-foreground text-xs">
+            <p className="text-muted-foreground text-sm">
               Medang Market is your trusted platform for buying and selling
               within the school community.
             </p>
@@ -19,7 +19,7 @@ export default function Footer() {
               <li>
                 <a
                   href="/products"
-                  className="text-muted-foreground hover:text-primary text-xs"
+                  className="text-muted-foreground hover:text-primary text-sm"
                 >
                   Products
                 </a>
@@ -27,7 +27,7 @@ export default function Footer() {
               <li>
                 <a
                   href="/sellers"
-                  className="text-muted-foreground hover:text-primary text-xs"
+                  className="text-muted-foreground hover:text-primary text-sm"
                 >
                   Sellers
                 </a>
@@ -35,7 +35,7 @@ export default function Footer() {
               <li>
                 <a
                   href="/about"
-                  className="text-muted-foreground hover:text-primary text-xs"
+                  className="text-muted-foreground hover:text-primary text-sm"
                 >
                   About Us
                 </a>
@@ -48,7 +48,7 @@ export default function Footer() {
               <li>
                 <a
                   href="/faq"
-                  className="text-muted-foreground hover:text-primary text-xs"
+                  className="text-muted-foreground hover:text-primary text-sm"
                 >
                   FAQ
                 </a>
@@ -56,7 +56,7 @@ export default function Footer() {
               <li>
                 <a
                   href="/contact"
-                  className="text-muted-foreground hover:text-primary text-xs"
+                  className="text-muted-foreground hover:text-primary text-sm"
                 >
                   Contact Us
                 </a>
@@ -64,7 +64,7 @@ export default function Footer() {
               <li>
                 <a
                   href="/terms"
-                  className="text-muted-foreground hover:text-primary text-xs"
+                  className="text-muted-foreground hover:text-primary text-sm"
                 >
                   Terms & Conditions
                 </a>
@@ -80,7 +80,7 @@ export default function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <div className="flex items-center text-xs">
+                <div className="flex items-center text-sm">
                   medangmarket@gmail.com
                 </div>
               </Link>
@@ -88,22 +88,26 @@ export default function Footer() {
                 href="https://wa.me/6289683094141"
                 className="text-muted-foreground hover:underline hover:text-green-500 mt-2"
               >
-                <div className="flex items-center text-xs mt-2">
-                  <FaWhatsapp size={18} className="mr-2" /> (+62) 896-8309-4141
+                <div className="flex items-center text-sm mt-2">
+                  <FaWhatsapp size={18} className="mr-2" />{" "}
+                  {/* <span>(+62) 896-8309-4141</span> */}
+                  <span>rzq.lasv</span>
                 </div>
               </Link>
               <Link
                 href="https://wa.me/6285891732172"
                 className="text-muted-foreground hover:underline hover:text-green-500 mt-2"
               >
-                <div className="flex items-center text-xs mt-2">
-                  <FaWhatsapp size={18} className="mr-2" /> (+62) 858-9178-3172
+                <div className="flex items-center text-sm mt-2">
+                  <FaWhatsapp size={18} className="mr-2" />{" "}
+                  {/* <span>(+62) 858-9178-3172</span> */}
+                  <span>halo.huddin</span>
                 </div>
               </Link>
             </div>
           </div>
         </div>
-        <div className="mt-8 pt-8 border-t text-center text-muted-foreground text-xs">
+        <div className="mt-8 pt-8 border-t text-center text-muted-foreground text-sm">
           <p>
             &copy; {new Date().getFullYear()} Medang Market. All rights
             reserved.

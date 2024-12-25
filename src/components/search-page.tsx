@@ -112,51 +112,57 @@ const SearchPage: React.FC<SearchPageProps> = ({ query, category }) => {
   }
 
   const renderProducts = () => (
-    <div className="flex flex-wrap gap-4 justify-center">
-      {products.map((item, i) => {
-        const { minPriceAfterDiscount, maxPriceAfterDiscount, discount } =
-          calculatePriceAndDiscount(item);
-        return (
-          <Link key={i} href={`/${item.seller_id.username}/${item.title}`}>
-            <Card className="w-fit min-w-80 dark:hover:bg-gray-900 relative hover:bg-gray-200 rounded-lg">
-              <div className="relative">
-                <AspectRatio ratio={16 / 9}>
-                  <Image
-                    src={item.variations[0].images[0] || "/placeholder.png"}
-                    alt={item.title}
-                    className="rounded-md object-cover"
-                    fill
-                    sizes="100%"
-                    priority
-                  />
-                </AspectRatio>
-                {discount && (
-                  <Badge
-                    variant="destructive"
-                    className="absolute top-2 right-2"
-                  >
-                    {discount}
-                  </Badge>
-                )}
-              </div>
-              <CardContent className="space-y-2 py-4">
-                <h2 className="text-lg font-semibold line-clamp-2">
-                  {item.title}
-                </h2>
-                <div className="flex items-center gap-5 justify-between">
-                  <div>
-                    <h3 className="text-xl font-semibold">
-                      {formatPrice(minPriceAfterDiscount)}{" "}
-                      {item.variations.length > 1 &&
-                        `- ${formatPrice(maxPriceAfterDiscount)}`}
-                    </h3>
-                  </div>
+    <div className="mx-auto">
+      <div className="flex flex-wrap gap-4 mx-auto">
+        {products.map((item, i) => {
+          const { minPriceAfterDiscount, maxPriceAfterDiscount, discount } =
+            calculatePriceAndDiscount(item);
+          return (
+            <Link
+              key={i}
+              href={`/${item.seller_id.username}/${item.title}`}
+              className="grow w-full max-w-80"
+            >
+              <Card className="w-full dark:hover:bg-gray-900 relative hover:bg-gray-200 rounded-lg">
+                <div className="relative">
+                  <AspectRatio ratio={16 / 9}>
+                    <Image
+                      src={item.variations[0].images[0] || "/placeholder.png"}
+                      alt={item.title}
+                      className="rounded-md object-cover"
+                      fill
+                      sizes="100%"
+                      priority
+                    />
+                  </AspectRatio>
+                  {discount && (
+                    <Badge
+                      variant="destructive"
+                      className="absolute top-2 right-2"
+                    >
+                      {discount}
+                    </Badge>
+                  )}
                 </div>
-              </CardContent>
-            </Card>
-          </Link>
-        );
-      })}
+                <CardContent className="space-y-2 py-4">
+                  <h2 className="text-lg font-semibold line-clamp-2">
+                    {item.title}
+                  </h2>
+                  <div className="flex items-center gap-5 justify-between">
+                    <div>
+                      <h3 className="text-xl font-semibold">
+                        {formatPrice(minPriceAfterDiscount)}{" "}
+                        {item.variations.length > 1 &&
+                          `- ${formatPrice(maxPriceAfterDiscount)}`}
+                      </h3>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
+          );
+        })}
+      </div>
     </div>
   );
 

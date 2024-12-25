@@ -158,7 +158,7 @@ const BigProductCard: React.FC<BigProductCardProps> = ({
                 <Image
                   src={image || "/placeholder.png"}
                   alt={product.title}
-                  className="rounded-md object-cover"
+                  className="rounded-md object-cover object-center"
                   fill
                   sizes="100%"
                   priority
