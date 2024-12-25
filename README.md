@@ -12,12 +12,12 @@ Medang Market tuh ibarat pasar digital 🛍️ buat anak-anak sekolah. Di sini, 
 
   - Daftar sama login, gampang! ✅
   - Bikin profil sendiri! 🖼️ Kasih nama, bio, kelas, foto profil, dan lainnya!
-  - Ada macem-macem peran: member, penjual, sama admin, masing-masing punya kekuatan! 💪
-  - Panel admin buat ngatur pengguna dan produk. 👮
+  - Ada macem-macem _roles_: member, penjual, sama admin, masing-masing punya kekuatan! 💪
+  - _Admin Panel_ buat mengatur pengguna dan produk. 👮
 
 - **📦 Manajemen Produk:**
 
-  - Penjual bisa nambahin dan ngatur produk mereka! ✍️
+  - Penjual bisa nambahin dan mengatur produk mereka! ✍️
   - Ada variasi produk (misalnya ukuran sama warna). 🌈
   - Tambahin foto 🖼️, set harga 💰, dan pantau stok! 📊
   - Bisa nyari produk dan filter berdasarkan kategori. 🔍
@@ -35,9 +35,9 @@ Medang Market tuh ibarat pasar digital 🛍️ buat anak-anak sekolah. Di sini, 
 
 - **🛡️ Panel Admin:**
 
-  - Ngatur semua pengguna dan peran mereka. 🧑‍💼
-  - Ngatur semua produk. 📦
-  - Verifikasi pengguna! ✅
+  - Mengatur semua pengguna dan peran mereka. 🧑‍💼
+  - Mengatur semua produk. 📦
+  - Verifikasi pengguna! (untuk para penjual) ✅
 
 - **🔎 Fitur Pencarian:**
 
@@ -47,10 +47,10 @@ Medang Market tuh ibarat pasar digital 🛍️ buat anak-anak sekolah. Di sini, 
 - **✨ UI yang Dinamis:**
 
   - Tampilannya responsive di semua perangkat. 📱💻
-  - Bisa ganti-ganti tema website! 🎨
+  - Bisa ganti-ganti tema website! (_light/dark mode_)🎨
 
 - **⚙️ API Routes:**
-  - Ada API buat pengguna, produk, keranjang, dan pesanan dengan operasi CRUD. 🚀
+  - Ada API buat pengguna, produk, keranjang, dan pesanan dengan operasi CRUD. (_khusus developer_) 🚀
 
 ## 🛠️ Teknologi yang Dipakai
 
@@ -60,7 +60,7 @@ Medang Market tuh ibarat pasar digital 🛍️ buat anak-anak sekolah. Di sini, 
   - [TypeScript](https://www.typescriptlang.org/) - JavaScript yang ada tipenya. ⌨️
   - [Tailwind CSS](https://tailwindcss.com/) - Framework CSS yang utility-first. 🎨
   - [Lucide React](https://lucide.dev/) - Library icon yang keren. ✨
-  - [Zustand](https://zustand-demo.pmnd.rs/) - Library buat ngatur state. 🎛️
+  - [Zustand](https://zustand-demo.pmnd.rs/) - Library buat mengatur state. 🎛️
   - [React Hook Form](https://react-hook-form.com/) - Library buat form. 📝
   - [Next Auth](https://next-auth.js.org/) - Library buat autentikasi. 🔑
   - [Sonner](https://sonner.emilkowalski.com/) - Library toast. 🍞
@@ -183,8 +183,9 @@ Kita seneng banget kalo ada yang mau berkontribusi! Kalo punya ide buat fitur at
 2. Bikin branch baru buat fitur atau perbaikan bug. 🌿
 3. Implementasi perubahan dan commit dengan pesan yang jelas. ✍️
 4. Bikin pull request! 🚀
+5. Kalian juga bisa hubungi [medangmarket@gmail.com](mailto:medangmarket@gmail.com)
 
-## 🧑‍🎓 Penulis
+## 🧑‍🎓 Author / Developer
 
 - **Rizqi** (**[Erzy.sh](https://github.com/Rilaptra)**)
 - **Huddin** (**[McWooden](https://github.com/McWooden)**)
