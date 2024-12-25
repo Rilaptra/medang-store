@@ -1,162 +1,162 @@
-# 🏫 Medang Market - School E-commerce Platform 🛒✨
+# 🏫 Medang Market - Platform E-commerce Sekolah 🛒✨
 
-A school e-commerce platform built with Next.js, Tailwind CSS, TypeScript, and MongoDB. Developed with ❤️ by **[Erzy.sh](https://github.com/Rilaptra)** (Rizqi) and **[McWooden](https://github.com/McWooden)** (Huddin), students of SMAN 3 Magelang, class XII. 🎓
+Medang Market itu kayak platform e-commerce buat sekolah, dibikin pake Next.js, Tailwind CSS, TypeScript, sama MongoDB. Dibuat dengan ❤️ sama **[Erzy.sh](https://github.com/Rilaptra)** (Rizqi) dan **[McWooden](https://github.com/McWooden)** (Huddin), anak-anak kelas XII SMAN 3 Magelang. 🎓
 
-## 📝 About
+## 📝 Tentang
 
-Medang Market is like a digital marketplace 🛍️ designed for our school community. It's a place where students, teachers, and staff can easily list products, manage orders, and connect with each other. Think of it as a vibrant and efficient school economy! 🚀
+Medang Market tuh ibarat pasar digital 🛍️ buat anak-anak sekolah. Di sini, siswa, guru, sama staf bisa gampang jual barang, atur pesanan, dan nyambung satu sama lain. Anggep aja ini ekonomi sekolah yang keren dan efisien! 🚀
 
-## 🌟 Features
+## 🌟 Fitur-fitur Kece
 
-- **👤 User Management:**
+- **👤 Manajemen Pengguna:**
 
-  - Register and log in! ✅
-  - Create your own profile! 🖼️ Add your name, bio, class, profile picture, and more!
-  - Different roles: member, seller, and admin, each with their own powers! 💪
-  - Admin panel to manage users and products. 👮
+  - Daftar sama login, gampang! ✅
+  - Bikin profil sendiri! 🖼️ Kasih nama, bio, kelas, foto profil, dan lainnya!
+  - Ada macem-macem peran: member, penjual, sama admin, masing-masing punya kekuatan! 💪
+  - Panel admin buat ngatur pengguna dan produk. 👮
 
-- **📦 Product Management:**
+- **📦 Manajemen Produk:**
 
-  - Sellers can add and manage their products! ✍️
-  - Supports product variations (like sizes and colors). 🌈
-  - Add images 🖼️, set prices 💰, and track stock! 📊
-  - Search for products and filter by category. 🔍
+  - Penjual bisa nambahin dan ngatur produk mereka! ✍️
+  - Ada variasi produk (misalnya ukuran sama warna). 🌈
+  - Tambahin foto 🖼️, set harga 💰, dan pantau stok! 📊
+  - Bisa nyari produk dan filter berdasarkan kategori. 🔍
 
-- **🛒 Cart and Checkout:**
+- **🛒 Keranjang Belanja dan Checkout:**
 
-  - Add items to your cart! ➕
-  - Manage your cart: change quantity or remove items. 🗑️
-  - Easy checkout with total amount calculation. 🧾
+  - Tambahin barang ke keranjang! ➕
+  - Atur keranjang: ganti jumlah atau hapus barang. 🗑️
+  - Checkout gampang, total harga dihitung otomatis. 🧾
 
-- **😎 Personalized User Profiles:**
+- **😎 Profil Pengguna yang Personal:**
 
-  - See other users' profiles with their products (if they're a seller) and followers. 👀
-  - Follow and unfollow users. 🫂
+  - Liat profil pengguna lain, produk mereka (kalo mereka penjual), dan follower. 👀
+  - Bisa follow sama unfollow pengguna lain. 🫂
 
-- **🛡️ Admin Panel:**
+- **🛡️ Panel Admin:**
 
-  - Manage all users and their roles. 🧑‍💼
-  - Manage all products. 📦
-  - Verify users! ✅
+  - Ngatur semua pengguna dan peran mereka. 🧑‍💼
+  - Ngatur semua produk. 📦
+  - Verifikasi pengguna! ✅
 
-- **🔎 Search Functionality:**
+- **🔎 Fitur Pencarian:**
 
-  - Search products by their name! ⌨️
-  - Filter products by category. 🗂️
+  - Nyari produk berdasarkan nama! ⌨️
+  - Filter produk berdasarkan kategori. 🗂️
 
-- **✨ Dynamic UI:**
+- **✨ UI yang Dinamis:**
 
-  - Responsive design for all devices. 📱💻
-  - Change the website's appearance with theming support! 🎨
+  - Tampilannya responsive di semua perangkat. 📱💻
+  - Bisa ganti-ganti tema website! 🎨
 
 - **⚙️ API Routes:**
-  - API routes for users, products, carts, and orders with CRUD operations. 🚀
+  - Ada API buat pengguna, produk, keranjang, dan pesanan dengan operasi CRUD. 🚀
 
-## 🛠️ Technologies Used
+## 🛠️ Teknologi yang Dipakai
 
 - **Frontend:**
-  - [Next.js](https://nextjs.org/) - React framework for server-side rendering and routing. ⚛️
-  - [React](https://reactjs.org/) - User interface building library. 💻
-  - [TypeScript](https://www.typescriptlang.org/) - Typed JavaScript. ⌨️
-  - [Tailwind CSS](https://tailwindcss.com/) - Utility-first CSS framework. 🎨
-  - [Lucide React](https://lucide.dev/) - Awesome icon library. ✨
-  - [Zustand](https://zustand-demo.pmnd.rs/) - State management library. 🎛️
-  - [React Hook Form](https://react-hook-form.com/) - Forms library. 📝
-  - [Next Auth](https://next-auth.js.org/) - Authentication library. 🔑
-  - [Sonner](https://sonner.emilkowalski.com/) - Toast library. 🍞
-  - [Next Theme](https://www.npmjs.com/package/next-theme) - Theme library. 🎨
+  - [Next.js](https://nextjs.org/) - Framework React buat server-side rendering dan routing. ⚛️
+  - [React](https://reactjs.org/) - Library buat bikin UI. 💻
+  - [TypeScript](https://www.typescriptlang.org/) - JavaScript yang ada tipenya. ⌨️
+  - [Tailwind CSS](https://tailwindcss.com/) - Framework CSS yang utility-first. 🎨
+  - [Lucide React](https://lucide.dev/) - Library icon yang keren. ✨
+  - [Zustand](https://zustand-demo.pmnd.rs/) - Library buat ngatur state. 🎛️
+  - [React Hook Form](https://react-hook-form.com/) - Library buat form. 📝
+  - [Next Auth](https://next-auth.js.org/) - Library buat autentikasi. 🔑
+  - [Sonner](https://sonner.emilkowalski.com/) - Library toast. 🍞
+  - [Next Theme](https://www.npmjs.com/package/next-theme) - Library tema. 🎨
 - **Backend:**
   - [Node.js](https://nodejs.org/en) - JavaScript runtime. 🚀
-  - [MongoDB](https://www.mongodb.com/) - NoSQL database. 🗄️
-  - [Mongoose](https://mongoosejs.com/) - MongoDB modeling tool. 🧰
-  - [Bcryptjs](https://www.npmjs.com/package/bcryptjs) - Password hashing. 🔒
+  - [MongoDB](https://www.mongodb.com/) - Database NoSQL. 🗄️
+  - [Mongoose](https://mongoosejs.com/) - Alat buat modeling MongoDB. 🧰
+  - [Bcryptjs](https://www.npmjs.com/package/bcryptjs) - Buat hashing password. 🔒
 - **Deployment:**
-  - [Vercel](https://vercel.com/) - Platform for deployment (or similar services). ☁️
+  - [Vercel](https://vercel.com/) - Platform buat deploy (atau yang sejenis). ☁️
 
-## 🚀 Getting Started
+## 🚀 Cara Mulai
 
-1. **Clone the repository:**
+1. **Clone repository-nya:**
 
    ```bash
-   git clone https://github.com/yourusername/medang-market.git
+   git clone https://github.com/usernamekamu/medang-market.git
    cd medang-market
    ```
 
-2. **Install dependencies:**
+2. **Install semua dependensi:**
 
    ```bash
    npm install
    ```
 
-3. **Set up environment variables:**
+3. **Setting variabel environment:**
 
-   - Create a `.env.local` file in the root directory. 📂
-   - Add your MongoDB connection URI as `MONGODB_URI`, and the session secret as `NEXTAUTH_SECRET`. Example:
+   - Bikin file `.env.local` di folder utama. 📂
+   - Tambahin URI koneksi MongoDB sebagai `MONGODB_URI`, dan session secret sebagai `NEXTAUTH_SECRET`. Contoh:
      ```env
-     MONGODB_URI=mongodb+srv://yourusername:yourpassword@yourcluster.mongodb.net/yourdbname
-     NEXTAUTH_SECRET=your_secret
+     MONGODB_URI=mongodb+srv://usernamekamu:passwordkamu@clusterkamu.mongodb.net/namadatabasemu
+     NEXTAUTH_SECRET=secretkamu
      NEXTAUTH_URL=http://localhost:3000
      NEXTAUTH_URL_INTERNAL=http://localhost:3000
      ```
-   - Get your Cloudinary cloud name, api key, api secret, and save as `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, and `CLOUDINARY_API_SECRET` respectively.
+   - Ambil cloud name, api key, api secret Cloudinary, terus simpen sebagai `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, sama `CLOUDINARY_API_SECRET`.
 
-4. **Run the development server:**
+4. **Jalanin server development:**
 
    ```bash
    npm run dev
    ```
 
-   Open [http://localhost:3000](http://localhost:3000) in your browser to see the magic! ✨
+   Buka [http://localhost:3000](http://localhost:3000) di browser buat liat keajaibannya! ✨
 
-## 🗂️ Directory Structure
+## 🗂️ Struktur Folder
 
 ```
 medang-market/
 ├── src/
-│   ├── app/                     # Next.js Application routes 🧭
-│   │   ├── api/                # API endpoints 📡
+│   ├── app/                     # Routes aplikasi Next.js 🧭
+│   │   ├── api/                # Endpoint API 📡
 │   │   │   ├── admin/
-│   │   │   │   └── user/route.ts # Admin-specific API routes 👮
+│   │   │   │   └── user/route.ts # API khusus admin 👮
 │   │   │   ├── auth/
-│   │   │   │   └── register/route.ts # User registration API route ✍️
-│   │   │   ├── cart/route.ts         # API routes for cart 🛒
+│   │   │   │   └── register/route.ts # API buat daftar pengguna ✍️
+│   │   │   ├── cart/route.ts         # API buat keranjang belanja 🛒
 │   │   │   ├── products/
-│   │   │   │   └── [...user]/route.ts  # Dynamic product API routes 📦
-│   │   │   └── search/route.ts    # API for search functionality 🔎
+│   │   │   │   └── [...user]/route.ts  # API dynamic buat produk 📦
+│   │   │   └── search/route.ts    # API buat fitur pencarian 🔎
 │   │   ├── auth/
-│   │   │   ├── register/page.tsx      # Register page ✍️
-│   │   │   └── signin/page.tsx        # Signin page 🔑
-│   │   ├── cart/page.tsx             # Cart page 🛒
-│   │   ├── products/page.tsx         # Products page 📦
-│   │   ├── [username]/page.tsx           # User profile page 😎
-│   │   ├── [username]/[productTitle]/page.tsx       # Individual product page 🖼️
-│   │   ├── admin/[...route]/page.tsx # Admin dashboard page 🛡️
-│   │   └── page.tsx                # Homepage 🏠
-│   ├── components/              # Reusable components 🧩
-│   │   ├── layout/              # Layout related components 📐
-│   │   │   ├── header.tsx        # Header Component ⬆️
-│   │   │   └── footer.tsx        # Footer Component ⬇️
-│   │   ├── add-product-dialog.tsx # Modal for adding product ➕
-│   │   ├── add-product-to-cart.tsx # Add to cart button 🛒
-│   │   ├── auth-provider.tsx # Authentication provider 🔑
-│   │   ├── big-product-card.tsx   # Component for product cards 📦
-│   │   ├── delete-product-dialog.tsx   # Confirmation modal for product deletion 🗑️
-│   │   ├── display-product-card.tsx   # Component for product cards in product list 📦
-│   │   ├── edit-product-dialog.tsx  # Edit product dialog ✏️
-│   │   ├── edit-profile.tsx  # Edit user profile 😎
-│   │   ├── error-dialog.tsx # Error dialog 🚨
-│   │   ├── order-history.tsx # Component to view order history 🧾
-│   │   ├── search-page.tsx    # Search page with product listings 🔎
-│   │   ├── seller-product-card.tsx    # Product card for sellers 🧑‍💼
-│   │   └── user-card.tsx    # Component to render user information 👤
+│   │   │   ├── register/page.tsx      # Halaman daftar ✍️
+│   │   │   └── signin/page.tsx        # Halaman login 🔑
+│   │   ├── cart/page.tsx             # Halaman keranjang belanja 🛒
+│   │   ├── products/page.tsx         # Halaman produk 📦
+│   │   ├── [username]/page.tsx           # Halaman profil pengguna 😎
+│   │   ├── [username]/[productTitle]/page.tsx       # Halaman detail produk 🖼️
+│   │   ├── admin/[...route]/page.tsx # Halaman dashboard admin 🛡️
+│   │   └── page.tsx                # Halaman utama 🏠
+│   ├── components/              # Komponen-komponen yang bisa dipake lagi 🧩
+│   │   ├── layout/              # Komponen terkait layout 📐
+│   │   │   ├── header.tsx        # Komponen Header ⬆️
+│   │   │   └── footer.tsx        # Komponen Footer ⬇️
+│   │   ├── add-product-dialog.tsx # Modal buat nambahin produk ➕
+│   │   ├── add-product-to-cart.tsx # Tombol tambah ke keranjang 🛒
+│   │   ├── auth-provider.tsx # Provider autentikasi 🔑
+│   │   ├── big-product-card.tsx   # Komponen untuk card produk 📦
+│   │   ├── delete-product-dialog.tsx   # Modal konfirmasi buat hapus produk 🗑️
+│   │   ├── display-product-card.tsx   # Komponen buat card produk di list produk 📦
+│   │   ├── edit-product-dialog.tsx  # Dialog edit produk ✏️
+│   │   ├── edit-profile.tsx  # Edit profil pengguna 😎
+│   │   ├── error-dialog.tsx # Dialog error 🚨
+│   │   ├── order-history.tsx # Komponen buat liat riwayat pesanan 🧾
+│   │   ├── search-page.tsx    # Halaman pencarian dengan list produk 🔎
+│   │   ├── seller-product-card.tsx    # Card produk buat penjual 🧑‍💼
+│   │   └── user-card.tsx    # Komponen buat nampilin info pengguna 👤
 │   ├── hooks/                 # Custom React hooks 🪝
-│   │    └── use-toast.ts      # Custom toast hook 🍞
-│   ├── lib/                   # Helper and library files 📚
-│   │   ├── auth-options.ts      # Options for Next Auth 🔑
-│   │   ├── db/                # MongoDB database logic 🗄️
-│   │   │   ├── connect.ts        # Connection to MongoDB 🔌
-│   │   │   ├── init.ts          # Initialize models ⚙️
-│   │   │   └── models/       # Models for data schema 📝
+│   │    └── use-toast.ts      # Custom hook toast 🍞
+│   ├── lib/                   # File helper dan library 📚
+│   │   ├── auth-options.ts      # Opsi untuk Next Auth 🔑
+│   │   ├── db/                # Logika database MongoDB 🗄️
+│   │   │   ├── connect.ts        # Koneksi ke MongoDB 🔌
+│   │   │   ├── init.ts          # Inisialisasi model ⚙️
+│   │   │   └── models/       # Model untuk skema data 📝
 │   │   │      ├── banner.model.ts
 │   │   │      ├── cart.model.ts
 │   │   │      ├── order-item.model.ts
@@ -165,32 +165,30 @@ medang-market/
 │   │   │      ├── product.model.ts
 │   │   │      ├── user.model.ts
 │   │   │      └── voucher.model.ts
-│   │   └── utils.ts      # Utility functions 🛠️
-│   ├── store/               # Zustand state management 🎛️
-│   │   └── cart-store.ts    # Cart store 🛒
-│   └── globals.css       # Global css styles 🎨
+│   │   └── utils.ts      # Fungsi-fungsi utilitas 🛠️
+│   ├── store/               # State management Zustand 🎛️
+│   │   └── cart-store.ts    # Store keranjang belanja 🛒
+│   └── globals.css       # Style CSS global 🎨
 │
-├── next.config.js          # Next.js Configuration ⚙️
-├── package.json           # Node.js dependencies and scripts 📦
-└── README.md            # Project documentation 📜
+├── next.config.js          # Konfigurasi Next.js ⚙️
+├── package.json           # Dependensi dan script Node.js 📦
+└── README.md            # Dokumentasi proyek 📜
 ```
 
-## 🤝 Contributing
+## 🤝 Kontribusi
 
-We love contributions! If you have an idea for a feature, or you found a bug, feel free to:
+Kita seneng banget kalo ada yang mau berkontribusi! Kalo punya ide buat fitur atau nemuin bug, jangan ragu buat:
 
-1. Fork the repository. 🍴
-2. Create a new branch for your feature or bug fix. 🌿
-3. Implement the changes and commit them with clear messages. ✍️
-4. Create a pull request! 🚀
+1. Fork repository-nya. 🍴
+2. Bikin branch baru buat fitur atau perbaikan bug. 🌿
+3. Implementasi perubahan dan commit dengan pesan yang jelas. ✍️
+4. Bikin pull request! 🚀
 
-## 🧑‍🎓 Authors
+## 🧑‍🎓 Penulis
 
 - **Rizqi** (**[Erzy.sh](https://github.com/Rilaptra)**)
 - **Huddin** (**[McWooden](https://github.com/McWooden)**)
 
-Students of SMAN 3 Magelang, class XII. 🎓
+Murid kelas XII SMAN 3 Magelang. 🎓
 
 ---
-
-Let me know if you want any further modifications! 😊
