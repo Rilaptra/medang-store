@@ -31,7 +31,6 @@ import { ChevronDownIcon } from "lucide-react";
 import { EditProductDialog } from "@/components/edit-product-dialog";
 import { DeleteProductDialog } from "@/components/delete-product-dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { ChevronDown, ChevronUp } from "react-feather";
 import AddProductToCart from "@/components/add-product-to-cart";
 import Link from "next/link";
 

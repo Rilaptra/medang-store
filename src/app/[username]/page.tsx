@@ -353,7 +353,7 @@ const UserPage: FC = () => {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="flex items-center gap-4 mb-4">
+            <div className="flex flex-col sm:flex-row items-center gap-4 mb-4">
               {session?.user.id !== user._id && (
                 <Button
                   variant={

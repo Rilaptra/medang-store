@@ -11,7 +11,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FaEnvelope, FaLock } from "react-icons/fa";
 import { cn } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
-import { useEffect } from "react";
 
 export default function Login() {
   const { data: session, status } = useSession();
