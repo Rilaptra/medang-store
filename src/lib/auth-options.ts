@@ -1,29 +1,36 @@
-import CredentialsProvider from "next-auth/providers/credentials";
+import CredentialsProvider, {
+  CredentialInput,
+} from "next-auth/providers/credentials";
 import { compare } from "bcryptjs";
-import { User } from "@/lib/db/models/user.model";
-import { AuthOptions } from "next-auth";
-import dbConnect from "@/lib/db/connect";
-
+import { AuthOptions, RequestInternal } from "next-auth";
+import { IUser } from "./db/models/user.model";
 export const authOptions = {
   secret: "secret",
   providers: [
     CredentialsProvider({
       name: "Credentials",
       credentials: {
-        email: { label: "Email", type: "email" },
+        username: {
+          label: "Username",
+          type: "text",
+          placeholder: "username",
+        } as CredentialInput,
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) {
+      async authorize(credentials, req) {
+        if (!credentials?.username || !credentials?.password) {
           throw new Error("Please enter an email and password");
         }
 
-        await dbConnect();
-        const user = await User.findOne({ email: credentials.email });
-        if (!user) {
-          throw new Error("No user found with this email");
+        const url = `${req.headers!.origin}/api/login?username=${
+          credentials.username
+        }`;
+        const data = await fetch(url);
+        if (!data.ok) {
+          throw new Error("Failed to fetch user data");
         }
-
+        const { user } = (await data.json()) as { user: IUser };
+        console.log(user);
         const isValid = await compare(credentials.password, user.hash);
 
         if (!isValid) {
@@ -31,7 +38,7 @@ export const authOptions = {
         }
 
         return {
-          id: user.id,
+          id: user._id,
           email: user.email,
           name: user.name,
           username: user.username,
@@ -45,6 +52,7 @@ export const authOptions = {
   },
   pages: {
     signIn: "/auth/signin",
+    error: "/auth/error",
   },
   callbacks: {
     async jwt({ token, user }) {

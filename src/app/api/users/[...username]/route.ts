@@ -30,7 +30,10 @@ export async function GET(
 
     let products = null;
     if (fetchProducts && user.role === "seller") {
-      products = await Product.find({ seller_id: user._id });
+      products = await Product.find({ seller_id: user._id }).populate({
+        path: "seller_id",
+        select: "username",
+      });
     }
 
     return NextResponse.json(

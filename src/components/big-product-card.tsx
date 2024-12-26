@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -14,6 +14,7 @@ import useTheme from "next-theme";
 import { IUser } from "@/lib/db/models/user.model";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import {
   Carousel,
   CarouselContent,
@@ -31,19 +32,20 @@ import { ChevronDownIcon } from "lucide-react";
 import { EditProductDialog } from "@/components/edit-product-dialog";
 import { DeleteProductDialog } from "@/components/delete-product-dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { ChevronDown, ChevronUp } from "react-feather";
 import AddProductToCart from "@/components/add-product-to-cart";
 import Link from "next/link";
 
 interface ProductOptionsProps {
   product: IProduct;
   user: IUser;
-  onProductChange: () => void;
+  onProductChangeAction: () => void;
 }
 
 export const ProductOptions: React.FC<ProductOptionsProps> = ({
   product,
   user,
-  onProductChange,
+  onProductChangeAction,
 }) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -77,13 +79,13 @@ export const ProductOptions: React.FC<ProductOptionsProps> = ({
         isOpen={isEditModalOpen}
         setIsOpen={setIsEditModalOpen}
         product={product}
-        onProductUpdated={onProductChange}
+        onProductUpdated={onProductChangeAction}
       />
       <DeleteProductDialog
         isOpen={isDeleteModalOpen}
         setIsOpen={setIsDeleteModalOpen}
         product={product}
-        onProductDeleted={onProductChange}
+        onProductDeleted={onProductChangeAction}
       />
     </>
   );
@@ -93,18 +95,25 @@ interface BigProductCardProps {
   product: IProduct;
   isLoading?: boolean;
   user: IUser;
-  onProductChange: () => void;
+  onProductChangeAction: () => void;
 }
 
 const BigProductCard: React.FC<BigProductCardProps> = ({
   product,
   isLoading,
   user,
-  onProductChange,
+  onProductChangeAction,
 }) => {
   const [selectedVariant, setSelectedVariant] = useState<number>(0);
   const { theme } = useTheme();
+  const router = useRouter();
   const { data: session } = useSession();
+  const [isSellerInfoOpen, setIsSellerInfoOpen] = useState(false);
+  const handleAddToCart = async () => {
+    toast.success(`Added ${product.title} to cart!`);
+    // tambahkan logic untuk keranjang belanja disini
+  };
+
   // Sort variations by price
   if (product.variations.length > 1)
     product.variations.sort((a, b) => a.price - b.price);
@@ -148,54 +157,66 @@ const BigProductCard: React.FC<BigProductCardProps> = ({
   const { discountedPrice, discount } = calculatePriceAndDiscount();
 
   const renderImage = () => {
-    return (
-      <Carousel className="w-full max-w-md flex flex-col mx-auto gap-2 p-6">
-        <CarouselContent>
-          {allImages.map((image, index) => (
-            <CarouselItem key={index}>
-              <div className="relative w-full aspect-video">
-                <Image
-                  src={image || "/placeholder.png"}
-                  alt={product.title}
-                  className="rounded-md object-cover object-center"
-                  fill
-                  sizes="100%"
-                  priority
-                />
-              </div>
-            </CarouselItem>
-          ))}
-        </CarouselContent>
-        <div className="flex gap-2">
-          {allImages.map((image, index) => (
-            <Image
-              src={image || "/placeholder.png"}
-              alt={product.title}
-              className="rounded-md object-center h-8 w-8"
-              width={32} // Use Tailwind's spacing scale or a custom size
-              height={32}
-              key={index}
-            />
-          ))}
-        </div>
-        <div className="flex justify-center gap-2">
-          <CarouselPrevious className="flex-1" />
-          <CarouselNext className="flex-1" />
-        </div>
-      </Carousel>
-    );
+    if (isLoading) {
+      return (
+        <AspectRatio ratio={1 / 1}>
+          <Skeleton className="rounded-md" />
+        </AspectRatio>
+      );
+    } else {
+      return (
+        <Carousel className="w-full flex flex-col gap-2 p-6">
+          <CarouselContent>
+            {allImages.map((image, index) => (
+              <CarouselItem key={index}>
+                <div className="relative w-full aspect-video">
+                  <Image
+                    src={image || "/placeholder.png"}
+                    alt={product.title}
+                    className="rounded-md object-cover"
+                    fill
+                    sizes="100%"
+                    priority
+                  />
+                </div>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          <div className="flex gap-2">
+            {allImages.map((image, index) => (
+              <Image
+                src={image || "/placeholder.png"}
+                alt={product.title}
+                className="rounded-md object-center"
+                width={32} // Use Tailwind's spacing scale or a custom size
+                height={32}
+                key={index}
+              />
+            ))}
+          </div>
+          <div className="flex justify-center gap-2">
+            <CarouselPrevious className="w-full static md:py-6 rounded-lg translate-y-0" />
+            <CarouselNext className="w-full static md:py-6 rounded-lg translate-y-0" />
+          </div>
+        </Carousel>
+      );
+    }
+  };
+
+  const handleToggleSellerInfo = () => {
+    setIsSellerInfoOpen(!isSellerInfoOpen);
   };
 
   return (
     <div className="w-full p-4 md:px-10 flex flex-col gap-4">
-      <Card className="dark:hover:bg-gray-900 relative hover:bg-gray-200 rounded-lg w-full flex flex-col md:flex-row h-full">
+      <Card className="dark:hover:bg-gray-900 relative hover:bg-gray-200 rounded-lg w-full flex flex-col xl:flex-row h-full">
         {renderImage()}
         {(session?.user.role === "admin" ||
           user.username === session?.user.username) && (
           <ProductOptions
             product={product}
             user={user}
-            onProductChange={onProductChange}
+            onProductChangeAction={onProductChangeAction}
           />
         )}
         <CardContent className="w-full flex flex-col gap-2 pt-6">
@@ -212,7 +233,7 @@ const BigProductCard: React.FC<BigProductCardProps> = ({
                 <Skeleton className="h-4 w-1/2 rounded-md" />
               ) : (
                 <p
-                  className={`text-sm  truncate text-wrap ${
+                  className={`text-sm  truncate ${
                     theme === "dark" ? "text-gray-400" : "text-gray-500"
                   }`}
                 >
@@ -281,11 +302,26 @@ const BigProductCard: React.FC<BigProductCardProps> = ({
                     fullWidth={true}
                   />
                 </div>
-                <div className="dark:border-gray-700"></div>
+                <div className="dark:border-gray-700">
+                  {/* <Button
+                  onClick={handleToggleSellerInfo}
+                  className="w-full py-2 flex items-center justify-between"
+                >
+                  <span className="text-sm font-semibold">Seller Info</span>
+                  {isSellerInfoOpen ? (
+                    <ChevronUp className="w-4 h-4" />
+                  ) : (
+                    <ChevronDown className="w-4 h-4" />
+                  )}
+                </Button> */}
+                  {/* {isSellerInfoOpen && ( */}
+                  {/* )} */}
+                </div>
               </div>
             </>
           )}
         </CardContent>
+        {/* <CardFooter className="pt-0 flex flex-col"></CardFooter> */}
       </Card>
       <Card>
         <Link

@@ -98,7 +98,7 @@ function ProductPage() {
       <BigProductCard
         product={product}
         user={product.seller_id}
-        onProductChange={getProduct}
+        onProductChangeAction={getProduct}
       />
     </div>
   );

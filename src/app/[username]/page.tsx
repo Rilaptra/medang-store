@@ -88,6 +88,7 @@ const UserPage: FC = () => {
   };
 
   const fetchProducts = async (userId: string) => {
+    // ini ngak kepake, dah ada di fetchuser
     try {
       const res = await fetch(`/api/products/${userId}`);
       if (!res.ok) {
@@ -95,6 +96,7 @@ const UserPage: FC = () => {
         throw new Error(errorData.message || "Failed to fetch products.");
       }
       const { data } = (await res.json()) as { data: IProduct[] };
+      console.log("datanya", data);
       setProducts(data);
     } catch (err: any) {
       handleFetchError(err.message);
@@ -291,7 +293,7 @@ const UserPage: FC = () => {
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-center gap-2">
+                  <div className="flex items-center justify-center sm:justify-start gap-2">
                     {userRoleBadge(user)}
                     {user.verified && (
                       <Badge
@@ -364,7 +366,7 @@ const UserPage: FC = () => {
                       : "default"
                   }
                   size="sm"
-                  className={`px-10 ${
+                  className={`px-10 w-full ${
                     isFollowing
                       ? "border-red-500 text-red-500 hover:text-red-500 hover:bg-red-500/5"
                       : theme === "dark"
@@ -380,7 +382,7 @@ const UserPage: FC = () => {
                 <Button
                   variant="outline"
                   size="sm"
-                  className={`px-4 dark:bg-transparent dark:text-green-500 dark:border-green-500 text-white bg-green-500 border-green-500`}
+                  className={`w-full px-4 dark:bg-transparent dark:text-green-500 dark:border-green-500 text-white bg-green-500 border-green-500`}
                   onClick={() => {
                     window.open(
                       `https://wa.me/+62${user.phone_number?.slice(
@@ -471,8 +473,8 @@ const UserPage: FC = () => {
                       product={item}
                       key={i}
                       isLoading={isLoading}
-                      user={user}
-                      onProductChange={fetchUser}
+                      // user={user}
+                      // onProductChange={fetchUser}
                     />
                   ))}
                 </div>

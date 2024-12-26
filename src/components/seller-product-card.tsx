@@ -1,11 +1,10 @@
 "use client";
 import React, { useState } from "react";
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ShoppingCart } from "react-feather";
 import { toast } from "sonner";
-import { IProduct, IVariation } from "@/lib/db/models/product.model";
+import { IProduct } from "@/lib/db/models/product.model";
 import Image from "next/image";
 import { Separator } from "@/components/ui/separator";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
@@ -17,21 +16,19 @@ import { FaEdit, FaTrash } from "react-icons/fa";
 import { EditProductDialog } from "./edit-product-dialog";
 import { DeleteProductDialog } from "./delete-product-dialog";
 import { useSession } from "next-auth/react";
-import { BsInfoCircle } from "react-icons/bs";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { calculatePriceAndDiscount } from "./search-page";
 
 interface ProductOptionsProps {
   product: IProduct;
   user: IUser;
-  onProductChange: () => void;
+  onProductChangeAction: () => void;
 }
 
 export const ProductOptions: React.FC<ProductOptionsProps> = ({
   product,
   user,
-  onProductChange,
+  onProductChangeAction,
 }) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -65,13 +62,13 @@ export const ProductOptions: React.FC<ProductOptionsProps> = ({
         isOpen={isEditModalOpen}
         setIsOpen={setIsEditModalOpen}
         product={product}
-        onProductUpdated={onProductChange}
+        onProductUpdated={onProductChangeAction}
       />
       <DeleteProductDialog
         isOpen={isDeleteModalOpen}
         setIsOpen={setIsDeleteModalOpen}
         product={product}
-        onProductDeleted={onProductChange}
+        onProductDeleted={onProductChangeAction}
       />
     </div>
   );
@@ -80,15 +77,14 @@ export const ProductOptions: React.FC<ProductOptionsProps> = ({
 interface ProductCardProps {
   product: IProduct;
   isLoading?: boolean;
-  user: IUser;
-  onProductChange: () => void;
+  // user: IUser;
+  // onProductChangeAction: () => void;
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({
   product,
   isLoading,
-  user,
-  onProductChange,
+  // onProductChangeAction,
 }) => {
   const { theme } = useTheme();
 
@@ -134,36 +130,36 @@ const ProductCard: React.FC<ProductCardProps> = ({
   };
 
   return (
-    <Card className="w-fit min-w-80 dark:hover:bg-gray-900 relative hover:bg-gray-200 rounded-lg">
-      <ProductOptions
+    <Card className="w-full max-w-80 dark:hover:bg-gray-900 relative hover:bg-gray-200 rounded-lg">
+      {/* <ProductOptions
         product={product}
-        user={user}
-        onProductChange={onProductChange}
-      />
-      <Link href={`/${user.username}/${encodeURI(product.title)}`}>
+        user={product.seller_id}
+        onProductChangeAction={onProductChangeAction}
+      /> */}
+      <Link href={`/${product.seller_id.username}/${encodeURI(product.title)}`}>
         {renderImage()}
-        <CardContent className="space-y-2 py-4">
+        <CardContent className="flex flex-col gap-2 py-4">
           <div className="flex justify-between items-center">
             <div>
               {isLoading ? (
                 <Skeleton className="h-4 w-3/4 rounded-md" />
               ) : (
-                <h2 className="text-lg font-semibold truncate">
+                <h2 className="flex-1 font-semibold truncate">
                   {product.title}
                 </h2>
-              )}
-              {isLoading ? (
-                <Skeleton className="h-4 w-1/2 rounded-md" />
-              ) : (
-                <p
-                  className={`text-sm  truncate ${
-                    theme === "dark" ? "text-gray-400" : "text-gray-500"
-                  }`}
-                >
-                  {product.description.length > 25
-                    ? product.description.slice(0, 25) + "..."
-                    : product.description}
-                </p>
+                // )}
+                // {isLoading ? (
+                //   <Skeleton className="h-4 w-1/2 rounded-md" />
+                // ) : (
+                //   <p
+                //     className={`text-sm  truncate ${
+                //       theme === "dark" ? "text-gray-400" : "text-gray-500"
+                //     }`}
+                //   >
+                //     {product.description.length > 25
+                //       ? product.description.slice(0, 25) + "..."
+                //       : product.description}
+                //   </p>
               )}
             </div>
             {isLoading ? (
@@ -172,9 +168,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
               <>
                 {
                   <Badge variant="destructive">
-                    {discount.max
-                      ? `${discount.max}%`
-                      : `${discount.min}% - ${discount.max}%`}
+                    {discount.min}%
+                    {(discount.max as number) > 0 && ` - ${discount.max}%`}
                   </Badge>
                 }
               </>

@@ -8,6 +8,7 @@ import { IProduct } from "@/lib/db/models/product.model";
 import { Badge } from "./ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
+import ProductCard from "@/components/seller-product-card";
 
 interface SearchPageProps {
   query?: string | null;
@@ -28,23 +29,25 @@ export function calculatePriceAndDiscount(product: IProduct) {
       ? maxVariation.price * (1 - maxVariation.discount / 100)
       : maxVariation.price - maxVariation.discount_value;
 
-  return {
+  const calc = {
     maxPrice: maxVariationPriceDiscounted,
     minPrice: minVariationPriceDiscounted,
     discount: {
       min: (minVariation.discount_type === "percent"
         ? minVariation.discount
         : (minVariationPriceDiscounted / minVariation.price) * 100
-      ).toFixed(1),
+      ).toFixed(),
       max:
         maxVariationPriceDiscounted === minVariationPriceDiscounted
-          ? null
+          ? 0
           : (maxVariation.discount_type === "percent"
               ? maxVariation.discount
               : (maxVariationPriceDiscounted / maxVariation.price) * 100
-            ).toFixed(1),
+            ).toFixed(),
     },
   };
+
+  return calc;
 }
 
 const SearchPage: React.FC<SearchPageProps> = ({ query, category }) => {
@@ -81,8 +84,6 @@ const SearchPage: React.FC<SearchPageProps> = ({ query, category }) => {
           totalProducts: number;
           currentPage: number;
         };
-
-        console.log("list:", data.data);
 
         setProducts(data.data);
         setTotalPages(data.totalPages);
@@ -137,59 +138,72 @@ const SearchPage: React.FC<SearchPageProps> = ({ query, category }) => {
     );
   }
 
+  // const renderProducts = () => (
+  //   <div className="mx-auto">
+  //     <div className="flex flex-wrap gap-4 mx-auto">
+  //       {products.map((item, i) => {
+  //         const { minPrice, maxPrice, discount } =
+  //           calculatePriceAndDiscount(item);
+  //         return (
+  //           <Link
+  //             key={i}
+  //             href={`/${item.seller_id.username}/${item.title}`}
+  //             className="grow w-full max-w-80"
+  //           >
+  //             <Card className="w-full dark:hover:bg-gray-900 relative hover:bg-gray-200 rounded-lg">
+  //               <div className="relative">
+  //                 <AspectRatio ratio={16 / 9}>
+  //                   <Image
+  //                     src={item.variations[0].images[0] || "/placeholder.png"}
+  //                     alt={item.title}
+  //                     className="rounded-md object-cover"
+  //                     fill
+  //                     sizes="100%"
+  //                     priority
+  //                   />
+  //                 </AspectRatio>
+  //                 {discount && (
+  //                   <Badge
+  //                     variant="destructive"
+  //                     className="absolute top-2 right-2"
+  //                   >
+  //                     {discount.max
+  //                       ? `${discount.min}% - ${discount.max}%`
+  //                       : `${discount.min}%`}
+  //                   </Badge>
+  //                 )}
+  //               </div>
+  //               <CardContent className="space-y-2 py-4">
+  //                 <h2 className="text-lg font-semibold line-clamp-2">
+  //                   {item.title}
+  //                 </h2>
+  //                 <div className="flex items-center gap-5 justify-between">
+  //                   <div>
+  //                     <h3 className="text-xl font-semibold">
+  //                       {formatPrice(minPrice)}{" "}
+  //                       {item.variations.length > 1 &&
+  //                         `- ${formatPrice(maxPrice)}`}
+  //                     </h3>
+  //                   </div>
+  //                 </div>
+  //               </CardContent>
+  //             </Card>
+  //           </Link>
+  //         );
+  //       })}
+  //     </div>
+  //   </div>
+  // );
   const renderProducts = () => (
     <div className="mx-auto">
       <div className="flex flex-wrap gap-4 mx-auto">
-        {products.map((item, i) => {
-          const { minPrice, maxPrice, discount } =
-            calculatePriceAndDiscount(item);
-          return (
-            <Link
-              key={i}
-              href={`/${item.seller_id.username}/${item.title}`}
-              className="grow w-full max-w-80"
-            >
-              <Card className="w-full dark:hover:bg-gray-900 relative hover:bg-gray-200 rounded-lg">
-                <div className="relative">
-                  <AspectRatio ratio={16 / 9}>
-                    <Image
-                      src={item.variations[0].images[0] || "/placeholder.png"}
-                      alt={item.title}
-                      className="rounded-md object-cover"
-                      fill
-                      sizes="100%"
-                      priority
-                    />
-                  </AspectRatio>
-                  {discount && (
-                    <Badge
-                      variant="destructive"
-                      className="absolute top-2 right-2"
-                    >
-                      {discount.max
-                        ? `${discount.min}% - ${discount.max}%`
-                        : `${discount.min}%`}
-                    </Badge>
-                  )}
-                </div>
-                <CardContent className="space-y-2 py-4">
-                  <h2 className="text-lg font-semibold line-clamp-2">
-                    {item.title}
-                  </h2>
-                  <div className="flex items-center gap-5 justify-between">
-                    <div>
-                      <h3 className="text-xl font-semibold">
-                        {formatPrice(minPrice)}{" "}
-                        {item.variations.length > 1 &&
-                          `- ${formatPrice(maxPrice)}`}
-                      </h3>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </Link>
-          );
-        })}
+        {products.map((item, i) => (
+          <ProductCard
+            product={item}
+            key={i}
+            // onProductChange={fetchUser}
+          />
+        ))}
       </div>
     </div>
   );

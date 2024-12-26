@@ -79,29 +79,30 @@ export default function Login() {
               className="flex flex-col gap-4"
             >
               <div className="grid gap-2">
-                <Label htmlFor="email" className="flex items-center gap-2">
+                <Label htmlFor="username" className="flex items-center gap-2">
                   <FaEnvelope />
-                  Email
+                  Username
                 </Label>
                 <Input
-                  type="email"
-                  id="email"
-                  {...methods.register("email", {
-                    required: "Email is required",
+                  type="username"
+                  id="username"
+                  {...methods.register("username", {
+                    required: "Username is required",
                     pattern: {
-                      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                      message: "Invalid email address",
+                      value: /^[a-z]+$/,
+                      message: "Invalid username address",
                     },
                   })}
                   className={cn(
                     "border dark:border-slate-700 focus-visible:ring-2 focus-visible:ring-blue-500 focus:outline-none",
-                    methods.formState.errors.email ? "ring-red-500" : ""
+                    methods.formState.errors.username ? "ring-red-500" : ""
                   )}
                 />
-                {methods.formState.errors.email && (
+                {methods.formState.errors.username && (
                   <span className="text-red-500 text-xs">
-                    {typeof methods.formState.errors.email.message === "string"
-                      ? methods.formState.errors.email.message
+                    {typeof methods.formState.errors.username.message ===
+                    "string"
+                      ? methods.formState.errors.username.message
                       : "An error occured"}
                   </span>
                 )}
