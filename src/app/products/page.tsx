@@ -127,7 +127,7 @@ const ProductsPage = () => {
               product={selectedProduct}
               isLoading={isLoading}
               user={user!}
-              onProductChange={() => {}}
+              onProductChangeAction={() => {}}
             />
           </div>
         )}
