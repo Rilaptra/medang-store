@@ -39,6 +39,7 @@ async function dbConnect(): Promise<Mongoose> {
     throw e;
   }
 
+  console.log("Registered models:", mongoose.models);
   return cached.conn;
 }
 
