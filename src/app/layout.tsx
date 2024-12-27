@@ -36,7 +36,9 @@ export default function RootLayout({
                   </div>
                 }
               >
-                <main className="flex-grow">{children}</main>
+                <main className="min-h-screen pt-[72px] grid grid-rows-[1fr_auto]">
+                  {children}
+                </main>
               </Suspense>
             </div>
             <Toaster richColors={true} />

@@ -94,7 +94,7 @@ function ProductPage() {
   }
 
   return (
-    <div className="container min-h-screen mx-auto">
+    <div className="container mx-auto">
       <BigProductCard
         product={product}
         user={product.seller_id}

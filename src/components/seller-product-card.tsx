@@ -130,7 +130,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
   };
 
   return (
-    <Card className="w-full max-w-80 dark:hover:bg-gray-900 relative hover:bg-gray-200 rounded-lg">
+    <Card className="w-full dark:hover:bg-gray-900 relative hover:bg-gray-200 rounded-lg shadow-none border-none">
       {/* <ProductOptions
         product={product}
         user={product.seller_id}
@@ -138,13 +138,13 @@ const ProductCard: React.FC<ProductCardProps> = ({
       /> */}
       <Link href={`/${product.seller_id.username}/${encodeURI(product.title)}`}>
         {renderImage()}
-        <CardContent className="flex flex-col gap-2 py-4">
+        <CardContent className="flex flex-col gap-2 p-2">
           <div className="flex justify-between items-center">
             <div>
               {isLoading ? (
                 <Skeleton className="h-4 w-3/4 rounded-md" />
               ) : (
-                <h2 className="flex-1 font-semibold truncate">
+                <h2 className="flex-1 text-xs font-semibold truncate">
                   {product.title}
                 </h2>
                 // )}
@@ -167,7 +167,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
             ) : (
               <>
                 {
-                  <Badge variant="destructive">
+                  <Badge variant="destructive" className="text-xs">
                     {discount.min}%
                     {(discount.max as number) > 0 && ` - ${discount.max}%`}
                   </Badge>
@@ -185,7 +185,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
           ) : (
             <div className="flex items-center gap-5 justify-between">
               <div>
-                <h3 className="text-lg font-semibold">
+                <h3 className="text-xs font-semibold">
                   {formatPrice(minPrice)}{" "}
                   {product.variations.length > 1 &&
                     `- ${formatPrice(maxPrice)}`}

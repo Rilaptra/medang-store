@@ -467,7 +467,7 @@ const UserPage: FC = () => {
             </CardContent>
             <CardContent>
               {products && products.length > 0 ? (
-                <div className="flex flex-wrap gap-4 justify-center">
+                <div className="grid grid-cols-[repeat(auto-fill,minmax(8rem,1fr))] gap-4">
                   {products.map((item, i) => (
                     <ProductCard
                       product={item}

@@ -42,28 +42,26 @@ export default function Header() {
   }
 
   return (
-    <header className="border-b">
+    <header className="border-b fixed top-0 left-0 right-0 z-[1] bg-background">
       <div className="container mx-auto p-4">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-6">
           <Link href="/" className="text-2xl font-bold flex gap-2 items-center">
             <Button variant="link" size="icon">
               <House className="h-5 w-5" />{" "}
             </Button>
-            <span className="hidden sm:inline-block whitespace-nowrap sm:pr-2">
+            <span className="hidden sm:inline-block whitespace-nowrap">
               Medang Market
             </span>
           </Link>
 
-          <Card className="w-full mx-4">
-            <Label htmlFor="search" className="flex items-center">
-              <div className="h-10 w-10 flex justify-center items-center">
-                <Search className="h-5 w-5" />
-              </div>
+          <Card className="w-full shadow-none border-none">
+            <Label htmlFor="search" className="flex items-center px-3 gap-2">
+              <Search className="h-5 w-5" />
               <input
                 type="text"
                 id="search"
                 name="search"
-                className="flex h-10 w-full rounded-md bg-background px-3 py-2 text-sm outline-none"
+                className="flex h-10 w-full rounded-md text-sm outline-none"
                 placeholder="Cari..."
                 onKeyDown={(event) => {
                   if (event.key === "Enter") {
@@ -79,7 +77,7 @@ export default function Header() {
             </Label>
           </Card>
 
-          <div className="hidden md:flex items-center space-x-6">
+          <div className="hidden md:flex md:gap-6 items-center">
             {session?.user ? (
               <>
                 <Link href="/cart">

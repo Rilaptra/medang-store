@@ -195,29 +195,27 @@ const SearchPage: React.FC<SearchPageProps> = ({ query, category }) => {
   //   </div>
   // );
   const renderProducts = () => (
-    <div className="mx-auto">
-      <div className="flex flex-wrap gap-4 mx-auto">
-        {products.map((item, i) => (
-          <ProductCard
-            product={item}
-            key={i}
-            // onProductChange={fetchUser}
-          />
-        ))}
-      </div>
+    <div className="grid grid-cols-[repeat(auto-fill,minmax(8rem,1fr))] gap-4">
+      {products.map((item, i) => (
+        <ProductCard
+          product={item}
+          key={i}
+          // onProductChange={fetchUser}
+        />
+      ))}
     </div>
   );
 
   return (
     <Suspense fallback={<LoadingSkeleton />}>
-      <div className="container mx-auto p-6">
+      <div className="container flex flex-col mx-auto p-6">
         {products.length === 0 ? (
           <div> No products found </div>
         ) : (
           renderProducts()
         )}
 
-        <div className="flex gap-2 mx-auto mt-6 justify-center items-center">
+        <div className="flex gap-2 mx-auto justify-center items-center mt-auto">
           <Button
             variant="ghost"
             onClick={() => handlePageChange(page - 1)}
