@@ -242,7 +242,7 @@ const UserPage: FC = () => {
   // --- Render User Page Content ---
   return (
     <div className="container mx-auto p-4 py-8">
-      <div className="flex flex-col gap-6">
+      <div className="flex flex-col">
         {/* User Card */}
         <Card>
           <CardHeader>
@@ -380,9 +380,9 @@ const UserPage: FC = () => {
               )}
               {user.phone_number && (
                 <Button
-                  variant="outline"
+                  variant="default"
                   size="sm"
-                  className={`w-full px-4 dark:bg-transparent dark:text-green-500 dark:border-green-500 text-white bg-green-500 border-green-500`}
+                  className={`w-full px-4 dark:bg-transparent dark:text-green-500 dark:border-green-500 text-white bg-green-500 border-green-500 hover:bg-green-400`}
                   onClick={() => {
                     window.open(
                       `https://wa.me/+62${user.phone_number?.slice(
@@ -400,8 +400,8 @@ const UserPage: FC = () => {
             </div>
             <div className="space-y-4">
               {user.bio && (
-                <div className="flex items-center gap-2">
-                  <UserIcon className="h-4 w-4" />
+                <div className="flex items-center gap-2 opacity-75">
+                  {/* <UserIcon className="h-4 w-4" /> */}
                   {user.bio}
                 </div>
               )}
@@ -448,24 +448,24 @@ const UserPage: FC = () => {
 
         {/* Products Section */}
         {user.role === "seller" && (
-          <Card>
-            <CardHeader>
-              <CardTitle>
+          <Card className="bg-background shadow-none">
+            <CardHeader className="px-0">
+              <CardTitle className="text-xl">
                 Products
-                <Separator className="my-5" />
+                {/* <Separator className="my-5" /> */}
               </CardTitle>
             </CardHeader>
-            <CardContent className="flex flex-col items-center justify-center">
-              {(user.username == session?.user.username ||
-                session?.user.role === "admin") && (
+            {(user.username == session?.user.username ||
+              session?.user.role === "admin") && (
+              <div className="flex flex-col items-center justify-center pb-6">
                 <AddProductDialog
                   isOpen={isAddProductOpen}
                   setIsOpen={setIsAddProductOpen}
                   seller={user}
                 />
-              )}
-            </CardContent>
-            <CardContent>
+              </div>
+            )}
+            <CardContent className="px-0">
               {products && products.length > 0 ? (
                 <div className="grid grid-cols-[repeat(auto-fill,minmax(8rem,1fr))] gap-4">
                   {products.map((item, i) => (

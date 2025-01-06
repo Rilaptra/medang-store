@@ -47,20 +47,20 @@ export default function Home() {
       <div className="container mx-auto px-4 py-8">
         <section className="text-center py-20 bg-gradient-to-r from-primary/10 to-primary/0 rounded-lg relative">
           <div
-            className="absolute inset-0 rounded-lg bg-gradient-to-r from-primary/10 to-primary/0 z-0 border-2 border-transparent border-r-0 border-l-0k"
+            className="absolute inset-0 rounded-lg bg-gradient-to-r from-primary/10 to-primary/0 border-2 border-transparent border-r-0 border-l-0k"
             style={{
               mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
               maskComposite: "exclude",
             }}
           ></div>
-          <h1 className="text-4xl md:text-6xl font-bold mb-6 relative z-10">
+          <h1 className="text-4xl md:text-6xl font-bold mb-6 ">
             Welcome to Medang Market
           </h1>
-          <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto relative z-10">
+          <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto ">
             Your trusted marketplace for the school community. Buy and sell with
             confidence.
           </p>
-          <div className="flex flex-col gap-2 md:flex-row w-full max-w-md mx-auto p-2 relative z-10">
+          <div className="flex flex-col gap-2 md:flex-row w-full max-w-md mx-auto p-2 ">
             <Link href="/products" className="flex-1">
               <Button size="lg" className="w-full">
                 Browse Products

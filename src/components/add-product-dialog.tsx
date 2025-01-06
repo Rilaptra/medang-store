@@ -161,7 +161,7 @@ export const AddProductDialog: React.FC<AddProductDialogProps> = ({
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="w-full">
+        <Button variant="default" className="w-full">
           Add Product
         </Button>
       </DialogTrigger>

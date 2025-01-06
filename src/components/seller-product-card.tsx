@@ -12,12 +12,13 @@ import { formatPrice } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
 import useTheme from "next-theme";
 import { IUser } from "@/lib/db/models/user.model";
-import { FaEdit, FaTrash } from "react-icons/fa";
+import { FaEdit, FaTrash, FaStar } from "react-icons/fa";
 import { EditProductDialog } from "./edit-product-dialog";
 import { DeleteProductDialog } from "./delete-product-dialog";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { calculatePriceAndDiscount } from "./search-page";
+import { Heart } from "lucide-react";
 
 interface ProductOptionsProps {
   product: IProduct;
@@ -113,7 +114,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
       );
     } else {
       return (
-        <div className="relative">
+        <div className="relative my-2">
           <AspectRatio ratio={16 / 9}>
             <Image
               src={images[0] || "/placeholder.png"}
@@ -130,15 +131,23 @@ const ProductCard: React.FC<ProductCardProps> = ({
   };
 
   return (
-    <Card className="w-full dark:hover:bg-gray-900 relative hover:bg-gray-200 rounded-lg shadow-none border-none">
+    <Card className="relative w-full dark:hover:bg-gray-900 hover:bg-gray-200 rounded-2xl shadow-none border-none p-3">
       {/* <ProductOptions
         product={product}
         user={product.seller_id}
         onProductChangeAction={onProductChangeAction}
       /> */}
+      <div className="flex justify-between items-center">
+        <Heart className="h-5 w-5" />
+        <Badge variant="destructive" className="text-xs">
+          {`${discount.min}${
+            (discount.max as number) > 0 ? ` - ${discount.max}` : ""
+          }%`}
+        </Badge>
+      </div>
       <Link href={`/${product.seller_id.username}/${encodeURI(product.title)}`}>
         {renderImage()}
-        <CardContent className="flex flex-col gap-2 p-2">
+        <CardContent className="flex flex-col p-0 mt-2">
           <div className="flex justify-between items-center">
             <div>
               {isLoading ? (
@@ -162,34 +171,34 @@ const ProductCard: React.FC<ProductCardProps> = ({
                 //   </p>
               )}
             </div>
-            {isLoading ? (
+            {/* {isLoading ? (
               <Skeleton className="h-4 w-1/4 rounded-md" />
             ) : (
               <>
                 {
                   <Badge variant="destructive" className="text-xs">
-                    {discount.min}%
+                    {`${discount.min}%`}
                     {(discount.max as number) > 0 && ` - ${discount.max}%`}
                   </Badge>
                 }
               </>
-            )}
+            )} */}
           </div>
 
-          <Separator />
+          {/* <Separator /> */}
           {isLoading ? (
             <div className="flex items-center justify-between">
               <Skeleton className="h-4 w-1/3 rounded-md" />
               <Skeleton className="h-8 w-1/4 rounded-md" />
             </div>
           ) : (
-            <div className="flex items-center gap-5 justify-between">
-              <div>
-                <h3 className="text-xs font-semibold">
-                  {formatPrice(minPrice)}{" "}
-                  {product.variations.length > 1 &&
-                    `- ${formatPrice(maxPrice)}`}
-                </h3>
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold flex-1 overflow-hidden whitespace-nowrap truncate">
+                {formatPrice(minPrice)}
+              </span>
+              <div className="flex text-xs gap-1">
+                <span>4.7</span>
+                <FaStar className="text-yellow-500" />
               </div>
             </div>
           )}

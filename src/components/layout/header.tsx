@@ -46,7 +46,7 @@ export default function Header() {
       <div className="container mx-auto p-4">
         <div className="flex items-center justify-between gap-6">
           <Link href="/" className="text-2xl font-bold flex gap-2 items-center">
-            <Button variant="link" size="icon">
+            <Button variant="link" size="icon" className="sm:hidden">
               <House className="h-5 w-5" />{" "}
             </Button>
             <span className="hidden sm:inline-block whitespace-nowrap">
@@ -54,14 +54,14 @@ export default function Header() {
             </span>
           </Link>
 
-          <Card className="w-full shadow-none border-none">
+          <Card className="w-full shadow-none border-none dark:bg-[#222]">
             <Label htmlFor="search" className="flex items-center px-3 gap-2">
               <Search className="h-5 w-5" />
               <input
                 type="text"
                 id="search"
                 name="search"
-                className="flex h-10 w-full rounded-md text-sm outline-none"
+                className="flex h-10 w-full rounded-md text-sm outline-none bg-transparent"
                 placeholder="Cari..."
                 onKeyDown={(event) => {
                   if (event.key === "Enter") {
@@ -69,6 +69,7 @@ export default function Header() {
                       event.target as HTMLInputElement
                     ).value.trim();
                     if (query) {
+                      console.log(query);
                       router.push(`/?search=${encodeURIComponent(query)}`);
                     }
                   }
@@ -161,7 +162,7 @@ export default function Header() {
 
         {/* Mobile menu */}
         {isMenuOpen && (
-          <div className="md:hidden mt-4 space-y-4">
+          <div className="md:hidden relative z-30 mt-4 space-y-4">
             {session?.user ? (
               <>
                 <Link href="/cart" className="block py-2 w-full h-full">
